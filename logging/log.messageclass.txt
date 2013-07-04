@@ -1,0 +1,10 @@
+000	& & & &
+001	& & & &
+002	Log entry not found
+004	No log object specified
+005	No log subobject specified
+007	No log number specified
+008	Error creating log
+010	No message specified
+011	No message type specified
+012	Error updating log

@@ -1,0 +1,3 @@
+000	& & & &
+001	& & & &
+002	Parse error, position & has unexpected character '&'

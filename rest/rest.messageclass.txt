@@ -1,0 +1,6 @@
+000	& & & &
+001	& & & &
+002	HTTP method not supported
+003	Resource not found
+004	URI too long
+005	Method not allowed

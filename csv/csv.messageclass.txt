@@ -1,0 +1,4 @@
+000	& & & &
+001	& & & &
+002	Empty CSV string
+003	Error in CSV format
