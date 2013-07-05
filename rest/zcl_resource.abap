@@ -31,12 +31,15 @@ public section.
       !REQUEST type ref to ZIF_REQUEST
       !RESPONSE type ref to ZIF_RESPONSE .
   methods NAME
+  final
     returning
       value(RETURNING) type ZRESOURCENAME .
   methods PATH
+  final
     returning
       value(RETURNING) type ZRESOURCEPATH .
   methods ID
+  final
     returning
       value(RETURNING) type STRING .
 protected section.
