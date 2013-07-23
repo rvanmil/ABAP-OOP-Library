@@ -6,42 +6,54 @@ class ZCL_REQUEST definition
 
 public section.
 
-*"* public components of class zCL_REQUEST
-*"* do not include other source files here!!!
-  interfaces ZIF_REQUEST .
-
-  aliases GET_BODY_BINARY
-    for ZIF_REQUEST~GET_BODY_BINARY .
-  aliases GET_BODY_TEXT
-    for ZIF_REQUEST~GET_BODY_TEXT .
-  aliases GET_CONTENT_TYPE
-    for ZIF_REQUEST~GET_CONTENT_TYPE .
-  aliases GET_HEADER
-    for ZIF_REQUEST~GET_HEADER .
-  aliases GET_METHOD
-    for ZIF_REQUEST~GET_METHOD .
-  aliases GET_PARAMETER
-    for ZIF_REQUEST~GET_PARAMETER .
-  aliases GET_RAW_MESSAGE
-    for ZIF_REQUEST~GET_RAW_MESSAGE .
-  aliases GET_REQUESTURI
-    for ZIF_REQUEST~GET_REQUESTURI .
-  aliases LIST_HEADERS
-    for ZIF_REQUEST~LIST_HEADERS .
-  aliases LIST_PARAMETERS
-    for ZIF_REQUEST~LIST_PARAMETERS .
+  data REQUEST type ref to IF_HTTP_REQUEST .
 
   methods CONSTRUCTOR
     importing
       !REQUEST type ref to IF_HTTP_REQUEST .
+  methods GET_BODY_BINARY
+    returning
+      value(RETURNING) type XSTRING .
+  methods GET_BODY_TEXT
+    returning
+      value(RETURNING) type STRING .
+  methods GET_BODY_JSON
+    returning
+      value(RETURNING) type ref to ZIF_JSON_VALUE
+    raising
+      ZCX_JSON_PARSE_ERROR .
+  methods GET_CONTENT_TYPE
+    returning
+      value(RETURNING) type STRING .
+  methods GET_HEADER
+    importing
+      !NAME type STRING
+    returning
+      value(RETURNING) type STRING .
+  methods GET_METHOD
+    returning
+      value(RETURNING) type STRING .
+  methods GET_PARAMETER
+    importing
+      !NAME type STRING
+    returning
+      value(RETURNING) type STRING .
+  methods GET_RAW_MESSAGE
+    returning
+      value(RETURNING) type XSTRING .
+  methods GET_REQUESTURI
+    returning
+      value(RETURNING) type STRING .
+  methods LIST_HEADERS
+    returning
+      value(RETURNING) type TIHTTPNVP .
+  methods LIST_PARAMETERS
+    returning
+      value(RETURNING) type TIHTTPNVP .
 protected section.
 *"* protected components of class zCL_REQUEST
 *"* do not include other source files here!!!
 private section.
-
-*"* private components of class zCL_REQUEST
-*"* do not include other source files here!!!
-  data REQUEST type ref to IF_HTTP_REQUEST .
 ENDCLASS.
 
 
@@ -50,11 +62,22 @@ CLASS ZCL_REQUEST IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method ZCL_REQUEST->ZIF_REQUEST~GET_BODY_BINARY
+* | Instance Public Method ZCL_REQUEST->CONSTRUCTOR
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] REQUEST                        TYPE REF TO IF_HTTP_REQUEST
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+method constructor.
+  super->constructor( ).
+  me->request = request.
+endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_REQUEST->GET_BODY_BINARY
 * +-------------------------------------------------------------------------------------------------+
 * | [<-()] RETURNING                      TYPE        XSTRING
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-method zif_request~get_body_binary.
+method get_body_binary.
 */**
 * Retrieves the body of the request as binary data.
 */
@@ -63,11 +86,29 @@ endmethod.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method ZCL_REQUEST->ZIF_REQUEST~GET_BODY_TEXT
+* | Instance Public Method ZCL_REQUEST->GET_BODY_JSON
+* +-------------------------------------------------------------------------------------------------+
+* | [<-()] RETURNING                      TYPE REF TO ZIF_JSON_VALUE
+* | [!CX!] ZCX_JSON_PARSE_ERROR
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+method get_body_json.
+*/**
+* Retrieves the body of the request as a JSON value object.
+*/
+  data: json_parser type ref to zcl_json_parser,
+        json_string type string.
+  create object json_parser.
+  json_string = me->request->get_cdata( ).
+  returning = json_parser->deserialize( json_string ).
+endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_REQUEST->GET_BODY_TEXT
 * +-------------------------------------------------------------------------------------------------+
 * | [<-()] RETURNING                      TYPE        STRING
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-method zif_request~get_body_text.
+method get_body_text.
 */**
 * Retrieves the body of the request as a string.
 */
@@ -76,11 +117,11 @@ endmethod.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method ZCL_REQUEST->ZIF_REQUEST~GET_CONTENT_TYPE
+* | Instance Public Method ZCL_REQUEST->GET_CONTENT_TYPE
 * +-------------------------------------------------------------------------------------------------+
 * | [<-()] RETURNING                      TYPE        STRING
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-method zif_request~get_content_type.
+method get_content_type.
 */**
 * Returns the MIME type of the body of the request, or null if the type is not known.
 */
@@ -89,12 +130,12 @@ endmethod.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method ZCL_REQUEST->ZIF_REQUEST~GET_HEADER
+* | Instance Public Method ZCL_REQUEST->GET_HEADER
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] NAME                           TYPE        STRING
 * | [<-()] RETURNING                      TYPE        STRING
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-method zif_request~get_header.
+method get_header.
 */**
 * Returns the value of the specified request header
 * as a string. If the request did not include a header
@@ -105,11 +146,11 @@ endmethod.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method ZCL_REQUEST->ZIF_REQUEST~GET_METHOD
+* | Instance Public Method ZCL_REQUEST->GET_METHOD
 * +-------------------------------------------------------------------------------------------------+
 * | [<-()] RETURNING                      TYPE        STRING
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-method zif_request~get_method.
+method get_method.
 */**
 * Returns the name of the HTTP method with which this request was made,
 * for example, GET, POST, or PUT.
@@ -120,12 +161,12 @@ endmethod.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method ZCL_REQUEST->ZIF_REQUEST~GET_PARAMETER
+* | Instance Public Method ZCL_REQUEST->GET_PARAMETER
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] NAME                           TYPE        STRING
 * | [<-()] RETURNING                      TYPE        STRING
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-method zif_request~get_parameter.
+method get_parameter.
 */**
 * Returns the value of a request parameter as a String,
 * or null if the parameter does not exist.
@@ -136,21 +177,21 @@ endmethod.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method ZCL_REQUEST->ZIF_REQUEST~GET_RAW_MESSAGE
+* | Instance Public Method ZCL_REQUEST->GET_RAW_MESSAGE
 * +-------------------------------------------------------------------------------------------------+
 * | [<-()] RETURNING                      TYPE        XSTRING
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-method zif_request~get_raw_message.
+method get_raw_message.
   returning = me->request->get_raw_message( ).
 endmethod.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method ZCL_REQUEST->ZIF_REQUEST~GET_REQUESTURI
+* | Instance Public Method ZCL_REQUEST->GET_REQUESTURI
 * +-------------------------------------------------------------------------------------------------+
 * | [<-()] RETURNING                      TYPE        STRING
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-method zif_request~get_requesturi.
+method get_requesturi.
 */**
 * Returns the part of this request's URL from the protocol name up to the query string in the first line of the HTTP request.
 * Examples:
@@ -164,11 +205,11 @@ endmethod.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method ZCL_REQUEST->ZIF_REQUEST~LIST_HEADERS
+* | Instance Public Method ZCL_REQUEST->LIST_HEADERS
 * +-------------------------------------------------------------------------------------------------+
 * | [<-()] RETURNING                      TYPE        TIHTTPNVP
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-method zif_request~list_headers.
+method list_headers.
 */**
 * Returns all request headers
 */
@@ -177,25 +218,14 @@ endmethod.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method ZCL_REQUEST->ZIF_REQUEST~LIST_PARAMETERS
+* | Instance Public Method ZCL_REQUEST->LIST_PARAMETERS
 * +-------------------------------------------------------------------------------------------------+
 * | [<-()] RETURNING                      TYPE        TIHTTPNVP
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-method zif_request~list_parameters.
+method list_parameters.
 */**
 * Returns all request parameters
 */
   me->request->get_form_fields_cs( changing fields = returning ).
-endmethod.
-
-
-* <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method ZCL_REQUEST->CONSTRUCTOR
-* +-------------------------------------------------------------------------------------------------+
-* | [--->] REQUEST                        TYPE REF TO IF_HTTP_REQUEST
-* +--------------------------------------------------------------------------------------</SIGNATURE>
-method constructor.
-  super->constructor( ).
-  me->request = request.
 endmethod.
 ENDCLASS.

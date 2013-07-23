@@ -50,8 +50,8 @@ endmethod.
 * <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Public Method ZCL_LOGGING_RESOURCE->CREATE
 * +-------------------------------------------------------------------------------------------------+
-* | [--->] REQUEST                        TYPE REF TO ZIF_REQUEST
-* | [--->] RESPONSE                       TYPE REF TO ZIF_RESPONSE
+* | [--->] REQUEST                        TYPE REF TO ZCL_REQUEST
+* | [--->] RESPONSE                       TYPE REF TO ZCL_RESPONSE
 * +--------------------------------------------------------------------------------------</SIGNATURE>
 method create.
 */**
@@ -133,8 +133,8 @@ endmethod.
 * <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Public Method ZCL_LOGGING_RESOURCE->READ
 * +-------------------------------------------------------------------------------------------------+
-* | [--->] REQUEST                        TYPE REF TO ZIF_REQUEST
-* | [--->] RESPONSE                       TYPE REF TO ZIF_RESPONSE
+* | [--->] REQUEST                        TYPE REF TO ZCL_REQUEST
+* | [--->] RESPONSE                       TYPE REF TO ZCL_RESPONSE
 * +--------------------------------------------------------------------------------------</SIGNATURE>
 method read.
 */**
@@ -194,8 +194,8 @@ endmethod.
 * <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Public Method ZCL_LOGGING_RESOURCE->UPDATE
 * +-------------------------------------------------------------------------------------------------+
-* | [--->] REQUEST                        TYPE REF TO ZIF_REQUEST
-* | [--->] RESPONSE                       TYPE REF TO ZIF_RESPONSE
+* | [--->] REQUEST                        TYPE REF TO ZCL_REQUEST
+* | [--->] RESPONSE                       TYPE REF TO ZCL_RESPONSE
 * +--------------------------------------------------------------------------------------</SIGNATURE>
 method update.
 */**

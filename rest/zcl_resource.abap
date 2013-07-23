@@ -12,24 +12,24 @@ public section.
 *"* do not include other source files here!!!
   methods CREATE
     importing
-      !REQUEST type ref to ZIF_REQUEST
-      !RESPONSE type ref to ZIF_RESPONSE .
+      !REQUEST type ref to ZCL_REQUEST
+      !RESPONSE type ref to ZCL_RESPONSE .
   methods READ
     importing
-      !REQUEST type ref to ZIF_REQUEST
-      !RESPONSE type ref to ZIF_RESPONSE .
+      !REQUEST type ref to ZCL_REQUEST
+      !RESPONSE type ref to ZCL_RESPONSE .
   methods UPDATE
     importing
-      !REQUEST type ref to ZIF_REQUEST
-      !RESPONSE type ref to ZIF_RESPONSE .
+      !REQUEST type ref to ZCL_REQUEST
+      !RESPONSE type ref to ZCL_RESPONSE .
   methods DELETE
     importing
-      !REQUEST type ref to ZIF_REQUEST
-      !RESPONSE type ref to ZIF_RESPONSE .
+      !REQUEST type ref to ZCL_REQUEST
+      !RESPONSE type ref to ZCL_RESPONSE .
   methods HEAD
     importing
-      !REQUEST type ref to ZIF_REQUEST
-      !RESPONSE type ref to ZIF_RESPONSE .
+      !REQUEST type ref to ZCL_REQUEST
+      !RESPONSE type ref to ZCL_RESPONSE .
   methods NAME
   final
     returning
@@ -60,8 +60,8 @@ CLASS ZCL_RESOURCE IMPLEMENTATION.
 * <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Public Method ZCL_RESOURCE->CREATE
 * +-------------------------------------------------------------------------------------------------+
-* | [--->] REQUEST                        TYPE REF TO ZIF_REQUEST
-* | [--->] RESPONSE                       TYPE REF TO ZIF_RESPONSE
+* | [--->] REQUEST                        TYPE REF TO ZCL_REQUEST
+* | [--->] RESPONSE                       TYPE REF TO ZCL_RESPONSE
 * +--------------------------------------------------------------------------------------</SIGNATURE>
 method create.
 */**
@@ -88,8 +88,8 @@ endmethod.
 * <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Public Method ZCL_RESOURCE->DELETE
 * +-------------------------------------------------------------------------------------------------+
-* | [--->] REQUEST                        TYPE REF TO ZIF_REQUEST
-* | [--->] RESPONSE                       TYPE REF TO ZIF_RESPONSE
+* | [--->] REQUEST                        TYPE REF TO ZCL_REQUEST
+* | [--->] RESPONSE                       TYPE REF TO ZCL_RESPONSE
 * +--------------------------------------------------------------------------------------</SIGNATURE>
 method delete.
 */**
@@ -115,8 +115,8 @@ endmethod.
 * <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Public Method ZCL_RESOURCE->HEAD
 * +-------------------------------------------------------------------------------------------------+
-* | [--->] REQUEST                        TYPE REF TO ZIF_REQUEST
-* | [--->] RESPONSE                       TYPE REF TO ZIF_RESPONSE
+* | [--->] REQUEST                        TYPE REF TO ZCL_REQUEST
+* | [--->] RESPONSE                       TYPE REF TO ZCL_RESPONSE
 * +--------------------------------------------------------------------------------------</SIGNATURE>
 method head.
 */**
@@ -171,8 +171,8 @@ endmethod.
 * <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Public Method ZCL_RESOURCE->READ
 * +-------------------------------------------------------------------------------------------------+
-* | [--->] REQUEST                        TYPE REF TO ZIF_REQUEST
-* | [--->] RESPONSE                       TYPE REF TO ZIF_RESPONSE
+* | [--->] REQUEST                        TYPE REF TO ZCL_REQUEST
+* | [--->] RESPONSE                       TYPE REF TO ZCL_RESPONSE
 * +--------------------------------------------------------------------------------------</SIGNATURE>
 method read.
 */**
@@ -199,8 +199,8 @@ endmethod.
 * <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Public Method ZCL_RESOURCE->UPDATE
 * +-------------------------------------------------------------------------------------------------+
-* | [--->] REQUEST                        TYPE REF TO ZIF_REQUEST
-* | [--->] RESPONSE                       TYPE REF TO ZIF_RESPONSE
+* | [--->] REQUEST                        TYPE REF TO ZCL_REQUEST
+* | [--->] RESPONSE                       TYPE REF TO ZCL_RESPONSE
 * +--------------------------------------------------------------------------------------</SIGNATURE>
 method update.
 */**

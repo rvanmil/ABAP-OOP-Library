@@ -18,13 +18,13 @@ private section.
 
   methods _SERVICE
     importing
-      !REQUEST type ref to ZIF_REQUEST
-      !RESPONSE type ref to ZIF_RESPONSE
+      !REQUEST type ref to ZCL_REQUEST
+      !RESPONSE type ref to ZCL_RESPONSE
     raising
       ZCX_RESOURCE_EXCEPTION .
   methods _GET_MAPPED_RESOURCE
     importing
-      !REQUEST type ref to ZIF_REQUEST
+      !REQUEST type ref to ZCL_REQUEST
     returning
       value(RETURNING) type ref to ZCL_RESOURCE
     raising
@@ -48,8 +48,8 @@ method if_http_extension~handle_request.
 */
 
   " Wrap request and response
-  data request type ref to zif_request.
-  data response type ref to zif_response.
+  data request type ref to zcl_request.
+  data response type ref to zcl_response.
   create object request
     type
     zcl_request
@@ -77,7 +77,7 @@ endmethod.
 * <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Private Method ZCL_DISPATCHER->_GET_MAPPED_RESOURCE
 * +-------------------------------------------------------------------------------------------------+
-* | [--->] REQUEST                        TYPE REF TO ZIF_REQUEST
+* | [--->] REQUEST                        TYPE REF TO ZCL_REQUEST
 * | [<-()] RETURNING                      TYPE REF TO ZCL_RESOURCE
 * | [!CX!] ZCX_URI_TOO_LONG
 * +--------------------------------------------------------------------------------------</SIGNATURE>
@@ -140,8 +140,8 @@ endmethod.
 * <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Private Method ZCL_DISPATCHER->_SERVICE
 * +-------------------------------------------------------------------------------------------------+
-* | [--->] REQUEST                        TYPE REF TO ZIF_REQUEST
-* | [--->] RESPONSE                       TYPE REF TO ZIF_RESPONSE
+* | [--->] REQUEST                        TYPE REF TO ZCL_REQUEST
+* | [--->] RESPONSE                       TYPE REF TO ZCL_RESPONSE
 * | [!CX!] ZCX_RESOURCE_EXCEPTION
 * +--------------------------------------------------------------------------------------</SIGNATURE>
 method _service.
