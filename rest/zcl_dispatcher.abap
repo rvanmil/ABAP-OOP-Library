@@ -29,6 +29,10 @@ private section.
       value(RETURNING) type ref to ZCL_RESOURCE
     raising
       ZCX_URI_TOO_LONG .
+  methods _LOG_REQUEST
+    importing
+      !RESOURCE type ref to ZCL_RESOURCE
+      !REQUEST type ref to ZCL_REQUEST .
 ENDCLASS.
 
 
@@ -133,7 +137,51 @@ method _get_mapped_resource.
       " Do nothing; this method returns null if no resource was found
       return.
   endtry.
+  " Log the request, if required
+  if resource_record-log_requests = abap_true.
+    _log_request( resource = resource request = request ).
+  endif.
+
   returning = resource.
+endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_DISPATCHER->_LOG_REQUEST
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] RESOURCE                       TYPE REF TO ZCL_RESOURCE
+* | [--->] REQUEST                        TYPE REF TO ZCL_REQUEST
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+method _log_request.
+  data: raw type xstring,
+        rawstr type string,
+        utf8_converter type ref to cl_abap_conv_in_ce,
+        restlog type zrestlog.
+
+  raw = request->get_raw_message( ).
+  utf8_converter = cl_abap_conv_in_ce=>create( encoding = 'UTF-8' ).
+  call method utf8_converter->convert
+    exporting
+      input = raw
+    importing
+      data  = rawstr.
+
+  get time.
+  try.
+      restlog-uuid = cl_system_uuid=>create_uuid_c32_static( ).
+    catch cx_uuid_error.
+      " Try to write without guid anyway
+  endtry.
+  restlog-requestdate = sy-datum.
+  restlog-requesttime = sy-uzeit.
+  restlog-requestuser = sy-uname.
+  restlog-resourcepath = resource->path( ).
+  restlog-resourcename = resource->name( ).
+  restlog-resourceid = resource->id( ).
+  restlog-request = rawstr.
+  insert zrestlog from restlog.
+  commit work.
+
 endmethod.
 
 
