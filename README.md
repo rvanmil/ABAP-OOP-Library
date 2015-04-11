@@ -8,47 +8,47 @@
 
 ## Dictionary Types
 
-### Table type 'array'
+### Table type 'zarray'
 
 Standard table with no keys.
-Line type: reference to cl_object
+Line type: reference to zcl_object
 
-### Data type 'resourceclass'
+### Data type 'zresourceclass'
 
 Domain: SEOCLSNAME
 
-### Data type 'resourceid'
+### Data type 'zresourcename'
 
-Built-in type: CHAR 20
+Built-in type: CHAR 30
 
-### Data type 'uripattern'
+### Data type 'zresourcepath'
 
 Built-in type: CHAR 255
 
-### Domain 'log_requests'
+### Domain 'zlog_requests'
 
 Built-in type: CHAR 1
 
     Values: ' ' No
             'X' Yes
 
-### Data type 'log_requests'
+### Data type 'zlog_requests'
 
-Domain: log_requests
+Domain: zlog_requests
 
-### Database table 'resources'
+### Database table 'zresources'
 
 Type: customizing  
 Buffer: full
 
     Field           Key   Type
     MANDT           X     MANDT
-    RESOURCEID      X     RESOURCEID
-    RESOURCECLASS         RESOURCECLASS
-    URIPATTERN            URIPATTERN
-    LOG_REQUESTS          LOG_REQUESTS
+    NAME            X     ZRESOURCENAME
+    CLASS                 ZRESOURCECLASS
+    PATH                  ZRESOURCEPATH
+    LOG_REQUESTS          ZLOG_REQUESTS
     
-### Database table 'restlog'
+### Database table 'zrestlog'
 
 Type: application  
 Buffer: none
@@ -59,8 +59,8 @@ Buffer: none
     REQUESTDATE     X     DATUM
     REQUESTTIME     X     UZEIT
     REQUESTUSER     X     UNAME
-    RESOURCEPATH          RESOURCEPATH
-    RESOURCENAME          RESOURCENAME
+    RESOURCEPATH          ZRESOURCEPATH
+    RESOURCENAME          ZRESOURCENAME
     RESOURCEID            STRING
     REQUEST               STRING
 
