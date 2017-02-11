@@ -194,17 +194,17 @@ method deserialize.
         if state = json_token_array_start.
           " End of array reached and state is the start of an array
           " This means the parent is an array and the result is a value
+          parent_array ?= parent.
           if result is bound. " Only add the result to the array if its bound
-            parent_array ?= parent.
             parent_array->add( result ).
-            clear parent_array.
-            " Parent becomes the result (we could be finished here)...
-            result = parent.
-            " ...and set the parent and state to their previous values
-            stack_depth = stack_depth - 1.
-            read table state_stack into state index stack_depth.
-            read table value_stack into parent index stack_depth.
           endif.
+          clear parent_array.
+          " Parent becomes the result (we could be finished here)...
+          result = parent.
+          " ...and set the parent and state to their previous values
+          stack_depth = stack_depth - 1.
+          read table state_stack into state index stack_depth.
+          read table value_stack into parent index stack_depth.
         else.
           " Can only reach end of array if state is the start of an array
           message e002(zjson) with position json_token_array_end into msg.
