@@ -1,0 +1,2988 @@
+*&---------------------------------------------------------------------*
+*&  Include  Z_LOCAL_JSON_UTIL
+*&---------------------------------------------------------------------*
+
+
+CLASS lcl_object DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+
+    METHODS clone
+      RETURNING
+        VALUE(returning) TYPE REF TO lcl_object .
+    TYPE-POOLS abap .
+    METHODS equals
+      IMPORTING
+        obj             TYPE REF TO lcl_object
+      RETURNING
+        VALUE(returning) TYPE abap_bool .
+    METHODS getclass
+      RETURNING
+        VALUE(returning) TYPE REF TO cl_abap_objectdescr .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCL_OBJECT definition
+
+TYPES ty_object_array TYPE STANDARD TABLE OF REF TO lcl_object WITH DEFAULT KEY.
+
+CLASS lcx_staticexception DEFINITION
+*  public
+  INHERITING FROM cx_static_check.
+*  create public .
+
+  PUBLIC SECTION.
+
+    DATA message TYPE string READ-ONLY .
+
+    METHODS constructor
+      IMPORTING
+        textid   LIKE textid OPTIONAL
+        previous LIKE previous OPTIONAL
+        message  TYPE string OPTIONAL .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCX_STATICEXCEPTION definition
+
+
+CLASS lcx_runtimeexception DEFINITION
+*  public
+  INHERITING FROM cx_no_check.
+*  create public .
+
+  PUBLIC SECTION.
+
+    DATA message TYPE string READ-ONLY .
+
+    METHODS constructor
+      IMPORTING
+        textid   LIKE textid OPTIONAL
+        previous LIKE previous OPTIONAL
+        message  TYPE string OPTIONAL .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCX_RUNTIMEEXCEPTION definition
+
+CLASS lcx_nosuchelement DEFINITION
+*  public
+  INHERITING FROM lcx_runtimeexception
+  FINAL.
+*  create public .
+
+  PUBLIC SECTION.
+
+    METHODS constructor
+      IMPORTING
+        textid   LIKE textid OPTIONAL
+        previous LIKE previous OPTIONAL
+        message  TYPE string OPTIONAL .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCX_NOSUCHELEMENT definition
+
+
+CLASS lcx_text_conversion_error DEFINITION
+*  public
+  INHERITING FROM lcx_runtimeexception
+  FINAL.
+*  create public .
+
+  PUBLIC SECTION.
+
+    METHODS constructor
+      IMPORTING
+        textid   LIKE textid OPTIONAL
+        previous LIKE previous OPTIONAL
+        message  TYPE string OPTIONAL .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCX_TEXT_CONVERSION_ERROR definition
+
+CLASS lcx_uri_too_long DEFINITION
+*  public
+  INHERITING FROM lcx_staticexception
+  FINAL.
+*  create public .
+
+  PUBLIC SECTION.
+
+    METHODS constructor
+      IMPORTING
+        textid   LIKE textid OPTIONAL
+        previous LIKE previous OPTIONAL
+        message  TYPE string OPTIONAL .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCX_URI_TOO_LONG definition
+
+
+CLASS lcx_resource_exception DEFINITION
+*  public
+  INHERITING FROM lcx_staticexception
+  FINAL.
+*  create public .
+
+  PUBLIC SECTION.
+
+    METHODS constructor
+      IMPORTING
+        textid   LIKE textid OPTIONAL
+        previous LIKE previous OPTIONAL
+        message  TYPE string OPTIONAL .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCX_RESOURCE_EXCEPTION definition
+
+CLASS lcx_logging_error DEFINITION
+*  public
+  INHERITING FROM lcx_runtimeexception
+  FINAL.
+*  create public .
+
+  PUBLIC SECTION.
+
+    METHODS constructor
+      IMPORTING
+        textid   LIKE textid OPTIONAL
+        previous LIKE previous OPTIONAL
+        message  TYPE string OPTIONAL .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCX_LOGGING_ERROR definition
+
+
+CLASS lcx_invalid_xml DEFINITION
+*  public
+  INHERITING FROM lcx_staticexception
+  FINAL.
+*  create public .
+
+  PUBLIC SECTION.
+
+    METHODS constructor
+      IMPORTING
+        textid   LIKE textid OPTIONAL
+        previous LIKE previous OPTIONAL
+        message  TYPE string OPTIONAL .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCX_INVALID_XML definition
+
+
+CLASS lcx_illegalstate DEFINITION
+*  public
+  INHERITING FROM lcx_runtimeexception
+  FINAL.
+*  create public .
+
+  PUBLIC SECTION.
+
+    METHODS constructor
+      IMPORTING
+        textid   LIKE textid OPTIONAL
+        previous LIKE previous OPTIONAL
+        message  TYPE string OPTIONAL .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCX_ILLEGALSTATE definition
+
+
+CLASS lcx_illegalargument DEFINITION
+*  public
+  INHERITING FROM lcx_runtimeexception
+  FINAL.
+*  create public .
+
+  PUBLIC SECTION.
+
+    METHODS constructor
+      IMPORTING
+        textid   LIKE textid OPTIONAL
+        previous LIKE previous OPTIONAL
+        message  TYPE string OPTIONAL .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCX_ILLEGALARGUMENT definition
+
+CLASS lcx_csv_parse_error DEFINITION
+*  public
+  INHERITING FROM lcx_staticexception
+  FINAL.
+*  create public .
+
+  PUBLIC SECTION.
+
+    METHODS constructor
+      IMPORTING
+        textid   LIKE textid OPTIONAL
+        previous LIKE previous OPTIONAL
+        message  TYPE string OPTIONAL .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCX_CSV_PARSE_ERROR definition
+
+
+CLASS lcx_concurrmodification DEFINITION
+*  public
+  INHERITING FROM lcx_runtimeexception
+  FINAL.
+*  create public .
+
+  PUBLIC SECTION.
+
+    METHODS constructor
+      IMPORTING
+        textid   LIKE textid OPTIONAL
+        previous LIKE previous OPTIONAL
+        message  TYPE string OPTIONAL .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCX_CONCURRMODIFICATION definition
+
+CLASS lcx_json_parse_error DEFINITION
+*  public
+  INHERITING FROM lcx_staticexception
+  FINAL.
+*  create public .
+
+  PUBLIC SECTION.
+
+    METHODS constructor
+      IMPORTING
+        textid   LIKE textid OPTIONAL
+        previous LIKE previous OPTIONAL
+        message  TYPE string OPTIONAL .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCX_JSON_PARSE_ERROR definition
+
+CLASS lcx_json_parse_error IMPLEMENTATION.
+************************************************************************
+  METHOD constructor.
+************************************************************************
+    CALL METHOD super->constructor
+      EXPORTING
+        textid   = textid
+        previous = previous
+        message  = message.
+  ENDMETHOD.
+ENDCLASS. "lCX_JSON_PARSE_ERROR implementation
+
+
+CLASS lcx_concurrmodification IMPLEMENTATION.
+************************************************************************
+  METHOD constructor.
+************************************************************************
+    CALL METHOD super->constructor
+      EXPORTING
+        textid   = textid
+        previous = previous
+        message  = message.
+  ENDMETHOD.
+ENDCLASS. "lCX_CONCURRMODIFICATION implementation
+
+CLASS lcx_csv_parse_error IMPLEMENTATION.
+************************************************************************
+  METHOD constructor.
+************************************************************************
+    CALL METHOD super->constructor
+      EXPORTING
+        textid   = textid
+        previous = previous
+        message  = message.
+  ENDMETHOD.
+ENDCLASS. "lCX_CSV_PARSE_ERROR implementation
+
+
+
+CLASS lcx_illegalargument IMPLEMENTATION.
+************************************************************************
+  METHOD constructor.
+************************************************************************
+    CALL METHOD super->constructor
+      EXPORTING
+        textid   = textid
+        previous = previous
+        message  = message.
+  ENDMETHOD.
+ENDCLASS. "lCX_ILLEGALARGUMENT implementation
+
+
+
+CLASS lcx_illegalstate IMPLEMENTATION.
+************************************************************************
+  METHOD constructor.
+************************************************************************
+    CALL METHOD super->constructor
+      EXPORTING
+        textid   = textid
+        previous = previous
+        message  = message.
+  ENDMETHOD.
+ENDCLASS. "lCX_ILLEGALSTATE implementation
+
+CLASS lcx_invalid_xml IMPLEMENTATION.
+************************************************************************
+  METHOD constructor.
+************************************************************************
+    CALL METHOD super->constructor
+      EXPORTING
+        textid   = textid
+        previous = previous
+        message  = message.
+  ENDMETHOD.
+ENDCLASS. "lCX_INVALID_XML implementation
+
+
+CLASS lcx_logging_error IMPLEMENTATION.
+************************************************************************
+  METHOD constructor.
+************************************************************************
+    CALL METHOD super->constructor
+      EXPORTING
+        textid   = textid
+        previous = previous
+        message  = message.
+  ENDMETHOD.
+ENDCLASS. "lCX_LOGGING_ERROR implementation
+
+
+
+
+CLASS lcx_resource_exception IMPLEMENTATION.
+************************************************************************
+  METHOD constructor.
+************************************************************************
+    CALL METHOD super->constructor
+      EXPORTING
+        textid   = textid
+        previous = previous
+        message  = message.
+  ENDMETHOD.
+ENDCLASS. "lCX_RESOURCE_EXCEPTION implementation
+
+CLASS lcx_uri_too_long IMPLEMENTATION.
+************************************************************************
+  METHOD constructor.
+************************************************************************
+    CALL METHOD super->constructor
+      EXPORTING
+        textid   = textid
+        previous = previous
+        message  = message.
+  ENDMETHOD.
+ENDCLASS. "lCX_URI_TOO_LONG implementation
+
+
+CLASS lcx_text_conversion_error IMPLEMENTATION.
+************************************************************************
+  METHOD constructor.
+************************************************************************
+    CALL METHOD super->constructor
+      EXPORTING
+        textid   = textid
+        previous = previous
+        message  = message.
+  ENDMETHOD.
+ENDCLASS. "lCX_TEXT_CONVERSION_ERROR implementation
+
+
+
+CLASS lcx_nosuchelement IMPLEMENTATION.
+************************************************************************
+  METHOD constructor.
+************************************************************************
+    CALL METHOD super->constructor
+      EXPORTING
+        textid   = textid
+        previous = previous
+        message  = message.
+  ENDMETHOD.
+ENDCLASS. "lCX_NOSUCHELEMENT implementation
+
+CLASS lcx_indexoutofbounds DEFINITION
+*  public
+  INHERITING FROM lcx_runtimeexception
+  FINAL.
+*  create public .
+
+  PUBLIC SECTION.
+
+    METHODS constructor
+      IMPORTING
+        textid   LIKE textid OPTIONAL
+        previous LIKE previous OPTIONAL
+        message  TYPE string OPTIONAL .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCX_INDEXOUTOFBOUNDS definition
+
+
+
+
+CLASS lcx_indexoutofbounds IMPLEMENTATION.
+************************************************************************
+  METHOD constructor.
+************************************************************************
+    CALL METHOD super->constructor
+      EXPORTING
+        textid   = textid
+        previous = previous
+        message  = message.
+  ENDMETHOD.
+ENDCLASS. "lCX_INDEXOUTOFBOUNDS implementation
+
+CLASS lcx_clonenotsupported DEFINITION
+*  PUBLIC
+  INHERITING FROM lcx_runtimeexception
+  FINAL.
+*  CREATE PUBLIC .
+
+  PUBLIC SECTION.
+
+    METHODS constructor
+      IMPORTING
+        textid   LIKE textid OPTIONAL
+        previous LIKE previous OPTIONAL
+        message  TYPE string OPTIONAL .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCX_CLONENOTSUPPORTED definition
+
+INTERFACE lif_json_value.
+*  public .
+  METHODS get_type
+    RETURNING
+      VALUE(returning) TYPE i .
+ENDINTERFACE.
+
+INTERFACE lif_iterator.
+*  public .
+  TYPE-POOLS abap .
+  METHODS hasnext
+    RETURNING
+      VALUE(returning) TYPE abap_bool .
+  METHODS next
+    RETURNING
+      VALUE(returning) TYPE REF TO lcl_object .
+  METHODS remove .
+ENDINTERFACE.
+
+INTERFACE lif_listiterator.
+*  PUBLIC .
+
+
+  INTERFACES lif_iterator .
+
+  ALIASES hasnext
+    FOR lif_iterator~hasnext .
+  ALIASES next
+    FOR lif_iterator~next .
+  ALIASES remove
+    FOR lif_iterator~remove .
+
+  METHODS add
+    IMPORTING
+      element TYPE REF TO lcl_object .
+  TYPE-POOLS abap .
+  METHODS hasprevious
+    RETURNING
+      VALUE(returning) TYPE abap_bool .
+  METHODS nextindex
+    RETURNING
+      VALUE(returning) TYPE i .
+  METHODS previous
+    RETURNING
+      VALUE(returning) TYPE REF TO lcl_object .
+  METHODS previousindex
+    RETURNING
+      VALUE(returning) TYPE i .
+  METHODS set
+    IMPORTING
+      element TYPE REF TO lcl_object .
+ENDINTERFACE.
+
+INTERFACE lif_collection.
+*  public .
+
+
+  TYPE-POOLS abap .
+  METHODS add
+    IMPORTING
+      element         TYPE REF TO lcl_object
+    RETURNING
+      VALUE(returning) TYPE abap_bool .
+  METHODS addall
+    IMPORTING
+      collection      TYPE REF TO lif_collection
+    RETURNING
+      VALUE(returning) TYPE abap_bool .
+  METHODS clear .
+  METHODS contains
+    IMPORTING
+      object          TYPE REF TO lcl_object
+    RETURNING
+      VALUE(returning) TYPE abap_bool .
+  METHODS containsall
+    IMPORTING
+      collection      TYPE REF TO lif_collection
+    RETURNING
+      VALUE(returning) TYPE abap_bool .
+  METHODS isempty
+    RETURNING
+      VALUE(returning) TYPE abap_bool .
+  METHODS iterator
+    RETURNING
+      VALUE(returning) TYPE REF TO lif_iterator .
+  METHODS remove
+    IMPORTING
+      object          TYPE REF TO lcl_object
+    RETURNING
+      VALUE(returning) TYPE abap_bool .
+  METHODS removeall
+    IMPORTING
+      collection      TYPE REF TO lif_collection
+    RETURNING
+      VALUE(returning) TYPE abap_bool .
+  METHODS retainall
+    IMPORTING
+      collection      TYPE REF TO lif_collection
+    RETURNING
+      VALUE(returning) TYPE abap_bool .
+  METHODS size
+    RETURNING
+      VALUE(returning) TYPE i .
+  METHODS toarray
+    RETURNING
+      VALUE(returning) TYPE ty_object_array .
+ENDINTERFACE.
+
+INTERFACE lif_list.
+*  public .
+
+
+  INTERFACES lif_collection .
+
+  ALIASES add
+    FOR lif_collection~add .
+  ALIASES addall
+    FOR lif_collection~addall .
+  ALIASES clear
+    FOR lif_collection~clear .
+  ALIASES contains
+    FOR lif_collection~contains .
+  ALIASES containsall
+    FOR lif_collection~containsall .
+  ALIASES isempty
+    FOR lif_collection~isempty .
+  ALIASES iterator
+    FOR lif_collection~iterator .
+  ALIASES remove
+    FOR lif_collection~remove .
+  ALIASES removeall
+    FOR lif_collection~removeall .
+  ALIASES retainall
+    FOR lif_collection~retainall .
+  ALIASES size
+    FOR lif_collection~size .
+  ALIASES toarray
+    FOR lif_collection~toarray .
+
+  METHODS addat
+    IMPORTING
+      index   TYPE i
+      element TYPE REF TO lcl_object .
+  TYPE-POOLS abap .
+  METHODS addallat
+    IMPORTING
+      index           TYPE i
+      collection      TYPE REF TO lif_collection
+    RETURNING
+      VALUE(returning) TYPE abap_bool .
+  METHODS get
+    IMPORTING
+      index           TYPE i
+    RETURNING
+      VALUE(returning) TYPE REF TO lcl_object .
+  METHODS indexof
+    IMPORTING
+      object          TYPE REF TO lcl_object
+    RETURNING
+      VALUE(returning) TYPE i .
+  METHODS lastindexof
+    IMPORTING
+      object          TYPE REF TO lcl_object
+    RETURNING
+      VALUE(returning) TYPE i .
+  METHODS listiterator
+    RETURNING
+      VALUE(returning) TYPE REF TO lif_listiterator .
+  METHODS listiteratorat
+    IMPORTING
+      index           TYPE i
+    RETURNING
+      VALUE(returning) TYPE REF TO lif_listiterator .
+  METHODS removeat
+    IMPORTING
+      index           TYPE i
+    RETURNING
+      VALUE(returning) TYPE REF TO lcl_object .
+  METHODS set
+    IMPORTING
+      index           TYPE i
+      element         TYPE REF TO lcl_object
+    RETURNING
+      VALUE(returning) TYPE REF TO lcl_object .
+ENDINTERFACE.
+
+
+
+CLASS lcl_abstractlist DEFINITION DEFERRED.
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_iterator DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_iterator DEFINITION INHERITING FROM lcl_object.
+  PUBLIC SECTION.
+    INTERFACES lif_iterator.
+    METHODS constructor IMPORTING enclosinglist TYPE REF TO lcl_abstractlist.
+  PROTECTED SECTION.
+    DATA enclosinglist TYPE REF TO lcl_abstractlist.
+    DATA cursor TYPE i VALUE 0.
+    DATA lastret TYPE i VALUE -1.
+    DATA expectedmodcount TYPE i.
+    METHODS checkforcomodification FINAL.
+ENDCLASS.                    "lcl_iterator DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_listiterator DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_listiterator DEFINITION INHERITING FROM lcl_iterator FINAL.
+  PUBLIC SECTION.
+    INTERFACES lif_listiterator.
+    METHODS constructor IMPORTING enclosinglist TYPE REF TO lcl_abstractlist
+                                  index         TYPE i.
+ENDCLASS.                    "lcl_listiterator DEFINITION
+
+CLASS lcl_abstractcollection DEFINITION
+*  public
+  INHERITING FROM lcl_object
+  ABSTRACT.
+*  create public .
+
+  PUBLIC SECTION.
+
+    INTERFACES lif_collection
+      ABSTRACT METHODS iterator
+      size .
+
+    ALIASES add
+      FOR lif_collection~add .
+    ALIASES addall
+      FOR lif_collection~addall .
+    ALIASES clear
+      FOR lif_collection~clear .
+    ALIASES contains
+      FOR lif_collection~contains .
+    ALIASES containsall
+      FOR lif_collection~containsall .
+    ALIASES isempty
+      FOR lif_collection~isempty .
+    ALIASES iterator
+      FOR lif_collection~iterator .
+    ALIASES remove
+      FOR lif_collection~remove .
+    ALIASES removeall
+      FOR lif_collection~removeall .
+    ALIASES retainall
+      FOR lif_collection~retainall .
+    ALIASES size
+      FOR lif_collection~size .
+    ALIASES toarray
+      FOR lif_collection~toarray .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCL_ABSTRACTCOLLECTION definition
+
+CLASS lcl_abstractlist DEFINITION
+
+*class lCL_ABSTRACTLIST definition
+*  public
+  INHERITING FROM lcl_abstractcollection
+  ABSTRACT
+*  create public .
+FRIENDS lcl_iterator lcl_listiterator.
+
+  PUBLIC SECTION.
+
+    INTERFACES lif_list
+      ABSTRACT METHODS get .
+
+    ALIASES addallat
+      FOR lif_list~addallat .
+    ALIASES addat
+      FOR lif_list~addat .
+    ALIASES get
+      FOR lif_list~get .
+    ALIASES indexof
+      FOR lif_list~indexof .
+    ALIASES lastindexof
+      FOR lif_list~lastindexof .
+    ALIASES listiterator
+      FOR lif_list~listiterator .
+    ALIASES listiteratorat
+      FOR lif_list~listiteratorat .
+    ALIASES removeat
+      FOR lif_list~removeat .
+    ALIASES set
+      FOR lif_list~set .
+
+    METHODS lif_collection~add
+         REDEFINITION .
+    METHODS lif_collection~clear
+         REDEFINITION .
+    METHODS lif_collection~iterator
+         REDEFINITION .
+    METHODS equals
+         REDEFINITION .
+  PROTECTED SECTION.
+
+    DATA modcount TYPE i VALUE 0.                         "#EC NOTEXT .
+
+    METHODS removerange
+      IMPORTING
+        fromindex TYPE i
+        toindex   TYPE i .
+  PRIVATE SECTION.
+ENDCLASS. "lCL_ABSTRACTLIST definition
+
+CLASS lcl_arraylist DEFINITION
+*  public
+  INHERITING FROM lcl_abstractlist.
+*  create public .
+
+  PUBLIC SECTION.
+
+    INTERFACES if_serializable_object .
+
+    METHODS constructor
+      IMPORTING
+        collection TYPE REF TO lif_collection OPTIONAL .
+
+    METHODS lif_collection~add
+         REDEFINITION .
+    METHODS lif_collection~addall
+         REDEFINITION .
+    METHODS lif_collection~clear
+         REDEFINITION .
+    METHODS lif_collection~contains
+         REDEFINITION .
+    METHODS lif_collection~isempty
+         REDEFINITION .
+    METHODS lif_collection~remove
+         REDEFINITION .
+    METHODS lif_collection~size
+         REDEFINITION .
+    METHODS lif_collection~toarray
+         REDEFINITION .
+    METHODS lif_list~addallat
+         REDEFINITION .
+    METHODS lif_list~addat
+         REDEFINITION .
+    METHODS lif_list~get
+         REDEFINITION .
+    METHODS lif_list~indexof
+         REDEFINITION .
+    METHODS lif_list~lastindexof
+         REDEFINITION .
+    METHODS lif_list~removeat
+         REDEFINITION .
+    METHODS lif_list~set
+         REDEFINITION .
+    METHODS clone
+         REDEFINITION .
+  PROTECTED SECTION.
+
+    METHODS removerange
+         REDEFINITION .
+  PRIVATE SECTION.
+
+    DATA elementdata TYPE ty_object_array .
+    DATA listsize TYPE i .
+
+    METHODS rangecheck
+      IMPORTING
+        index TYPE i .
+ENDCLASS. "lCL_ARRAYLIST definition
+
+CLASS lcl_json_types DEFINITION
+*  PUBLIC
+  INHERITING FROM lcl_object
+  FINAL.
+*  create public .
+
+  PUBLIC SECTION.
+
+    CONSTANTS type_string TYPE i VALUE 1.                   "#EC NOTEXT
+    CONSTANTS type_number TYPE i VALUE 2.                   "#EC NOTEXT
+    CONSTANTS type_boolean TYPE i VALUE 3.                  "#EC NOTEXT
+    CONSTANTS type_null TYPE i VALUE 4.                     "#EC NOTEXT
+    CONSTANTS type_object TYPE i VALUE 5.                   "#EC NOTEXT
+    CONSTANTS type_array TYPE i VALUE 6.                    "#EC NOTEXT
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCL_JSON_TYPES definition
+
+CLASS lcl_json_string DEFINITION
+*  PUBLIC
+  INHERITING FROM lcl_object
+  FINAL.
+*  create public .
+
+  PUBLIC SECTION.
+
+    INTERFACES lif_json_value .
+
+    ALIASES get_type
+      FOR lif_json_value~get_type .
+
+    DATA value TYPE string .
+
+    METHODS constructor
+      IMPORTING
+        value TYPE string .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCL_JSON_STRING definition
+
+
+CLASS lcl_json_pair DEFINITION
+*  PUBLIC
+  INHERITING FROM lcl_object
+  FINAL.
+*  create public .
+
+  PUBLIC SECTION.
+
+    DATA name TYPE REF TO lcl_json_string .
+    DATA value TYPE REF TO lif_json_value .
+
+    METHODS constructor
+      IMPORTING
+        name  TYPE REF TO lcl_json_string
+        value TYPE REF TO lif_json_value .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCL_JSON_PAIR definition
+
+
+CLASS lcl_json_number DEFINITION
+*  PUBLIC
+  INHERITING FROM lcl_object
+  FINAL.
+*  create public .
+
+  PUBLIC SECTION.
+
+    INTERFACES lif_json_value .
+
+    ALIASES get_type
+      FOR lif_json_value~get_type .
+
+    DATA value TYPE f .
+
+    METHODS constructor
+      IMPORTING
+        value TYPE f .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCL_JSON_NUMBER definition
+
+
+CLASS lcl_json_null DEFINITION
+*  PUBLIC
+  INHERITING FROM lcl_object
+  FINAL.
+*  create public .
+
+  PUBLIC SECTION.
+
+    INTERFACES lif_json_value .
+
+    ALIASES get_type
+      FOR lif_json_value~get_type .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCL_JSON_NULL definition
+
+
+CLASS lcl_json_boolean DEFINITION
+*  PUBLIC
+  INHERITING FROM lcl_object
+  FINAL.
+*  create public .
+
+  PUBLIC SECTION.
+
+    INTERFACES lif_json_value .
+
+    ALIASES get_type
+      FOR lif_json_value~get_type .
+
+    TYPE-POOLS abap .
+    DATA value TYPE abap_bool .
+
+    METHODS constructor
+      IMPORTING
+        value TYPE abap_bool .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCL_JSON_BOOLEAN definition
+
+CLASS lcl_json_object DEFINITION
+*  PUBLIC
+  INHERITING FROM lcl_object
+  FINAL.
+*  create public .
+
+  PUBLIC SECTION.
+
+    INTERFACES lif_json_value .
+
+    ALIASES get_type
+      FOR lif_json_value~get_type .
+
+    METHODS constructor .
+    TYPE-POOLS abap .
+    METHODS add
+      IMPORTING
+        pair            TYPE REF TO lcl_json_pair
+      RETURNING
+        VALUE(returning) TYPE abap_bool .
+    METHODS clear .
+    METHODS get
+      IMPORTING
+        index           TYPE i
+      RETURNING
+        VALUE(returning) TYPE REF TO lcl_json_pair .
+    METHODS iterator
+      RETURNING
+        VALUE(returning) TYPE REF TO lif_iterator .
+    METHODS remove
+      IMPORTING
+        pair            TYPE REF TO lcl_json_pair
+      RETURNING
+        VALUE(returning) TYPE abap_bool .
+    METHODS set
+      IMPORTING
+        index           TYPE i
+        pair            TYPE REF TO lcl_json_pair
+      RETURNING
+        VALUE(returning) TYPE REF TO lcl_json_pair .
+    METHODS size
+      RETURNING
+        VALUE(returning) TYPE i .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+
+    DATA pairs TYPE REF TO lcl_arraylist .
+ENDCLASS. "lCL_JSON_OBJECT definition
+
+
+CLASS lcl_json_array DEFINITION
+*  PUBLIC
+  INHERITING FROM lcl_object
+  FINAL.
+*  create public .
+
+  PUBLIC SECTION.
+
+    INTERFACES lif_json_value .
+
+    ALIASES get_type
+      FOR lif_json_value~get_type .
+
+    METHODS constructor .
+    TYPE-POOLS abap .
+    METHODS add
+      IMPORTING
+        value           TYPE REF TO lif_json_value
+      RETURNING
+        VALUE(returning) TYPE abap_bool .
+    METHODS clear .
+    METHODS get
+      IMPORTING
+        index           TYPE i
+      RETURNING
+        VALUE(returning) TYPE REF TO lif_json_value .
+    METHODS iterator
+      RETURNING
+        VALUE(returning) TYPE REF TO lif_iterator .
+    METHODS remove
+      IMPORTING
+        value           TYPE REF TO lif_json_value
+      RETURNING
+        VALUE(returning) TYPE abap_bool .
+    METHODS set
+      IMPORTING
+        index           TYPE i
+        value           TYPE REF TO lif_json_value
+      RETURNING
+        VALUE(returning) TYPE REF TO lif_json_value .
+    METHODS size
+      RETURNING
+        VALUE(returning) TYPE i .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+
+    DATA values TYPE REF TO lcl_arraylist .
+ENDCLASS. "lCL_JSON_ARRAY definition
+
+
+
+
+CLASS lcl_json_array IMPLEMENTATION.
+************************************************************************
+  METHOD lif_json_value~get_type.
+************************************************************************
+    returning = lcl_json_types=>type_array.
+  ENDMETHOD.
+************************************************************************
+  METHOD add.
+************************************************************************
+    DATA object TYPE REF TO lcl_object.
+    object ?= value.
+    returning = me->values->add( object ).
+  ENDMETHOD.
+************************************************************************
+  METHOD clear.
+************************************************************************
+    me->values->clear( ).
+  ENDMETHOD.
+************************************************************************
+  METHOD constructor.
+************************************************************************
+    super->constructor( ).
+    " Init values list
+    CREATE OBJECT me->values.
+  ENDMETHOD.
+************************************************************************
+  METHOD get.
+************************************************************************
+    returning ?= me->values->get( index ).
+  ENDMETHOD.
+************************************************************************
+  METHOD iterator.
+************************************************************************
+    returning = me->values->iterator( ).
+  ENDMETHOD.
+************************************************************************
+  METHOD remove.
+************************************************************************
+    DATA object TYPE REF TO lcl_object.
+    object ?= value.
+    returning = me->values->remove( object ).
+  ENDMETHOD.
+************************************************************************
+  METHOD set.
+************************************************************************
+    DATA object TYPE REF TO lcl_object.
+    object ?= value.
+    returning ?= me->values->set( index = index element = object ).
+  ENDMETHOD.
+************************************************************************
+  METHOD size.
+************************************************************************
+    returning = me->values->size( ).
+  ENDMETHOD.
+ENDCLASS. "lCL_JSON_ARRAY implementation
+
+
+
+
+CLASS lcl_json_object IMPLEMENTATION.
+************************************************************************
+  METHOD lif_json_value~get_type.
+************************************************************************
+    returning = lcl_json_types=>type_object.
+  ENDMETHOD.
+************************************************************************
+  METHOD add.
+************************************************************************
+    DATA object TYPE REF TO lcl_object.
+    object = pair.
+    returning = me->pairs->add( object ).
+  ENDMETHOD.
+************************************************************************
+  METHOD clear.
+************************************************************************
+    me->pairs->clear( ).
+  ENDMETHOD.
+************************************************************************
+  METHOD constructor.
+************************************************************************
+    super->constructor( ).
+    " Init pairs list
+    CREATE OBJECT me->pairs.
+  ENDMETHOD.
+************************************************************************
+  METHOD get.
+************************************************************************
+    returning ?= me->pairs->get( index ).
+  ENDMETHOD.
+************************************************************************
+  METHOD iterator.
+************************************************************************
+    returning = me->pairs->iterator( ).
+  ENDMETHOD.
+************************************************************************
+  METHOD remove.
+************************************************************************
+    DATA object TYPE REF TO lcl_object.
+    object = pair.
+    returning = me->pairs->remove( object ).
+  ENDMETHOD.
+************************************************************************
+  METHOD set.
+************************************************************************
+    DATA object TYPE REF TO lcl_object.
+    object = pair.
+    returning ?= me->pairs->set( index = index element = object ).
+  ENDMETHOD.
+************************************************************************
+  METHOD size.
+************************************************************************
+    returning = me->pairs->size( ).
+  ENDMETHOD.
+ENDCLASS. "lCL_JSON_OBJECT implementation
+
+
+
+
+CLASS lcl_json_boolean IMPLEMENTATION.
+************************************************************************
+  METHOD lif_json_value~get_type.
+************************************************************************
+    returning = lcl_json_types=>type_boolean.
+  ENDMETHOD.
+************************************************************************
+  METHOD constructor.
+************************************************************************
+    super->constructor( ).
+    me->value = value.
+  ENDMETHOD.
+ENDCLASS. "lCL_JSON_BOOLEAN implementation
+
+
+
+CLASS lcl_json_null IMPLEMENTATION.
+************************************************************************
+  METHOD lif_json_value~get_type.
+************************************************************************
+    returning = lcl_json_types=>type_null.
+  ENDMETHOD.
+ENDCLASS. "lCL_JSON_NULL implementation
+
+CLASS lcl_json_number IMPLEMENTATION.
+************************************************************************
+  METHOD lif_json_value~get_type.
+************************************************************************
+    returning = lcl_json_types=>type_number.
+  ENDMETHOD.
+************************************************************************
+  METHOD constructor.
+************************************************************************
+    super->constructor( ).
+    me->value = value.
+  ENDMETHOD.
+ENDCLASS. "lCL_JSON_NUMBER implementation
+
+
+
+CLASS lcl_json_pair IMPLEMENTATION.
+************************************************************************
+  METHOD constructor.
+************************************************************************
+    super->constructor( ).
+    me->name = name.
+    me->value = value.
+  ENDMETHOD.
+ENDCLASS. "lCL_JSON_PAIR implementation
+
+CLASS lcl_json_string IMPLEMENTATION.
+************************************************************************
+  METHOD lif_json_value~get_type.
+************************************************************************
+    returning = lcl_json_types=>type_string.
+  ENDMETHOD.
+************************************************************************
+  METHOD constructor.
+************************************************************************
+    super->constructor( ).
+    me->value = value.
+  ENDMETHOD.
+ENDCLASS. "lCL_JSON_STRING implementation
+
+
+CLASS lcl_json_types IMPLEMENTATION.
+ENDCLASS. "lCL_JSON_TYPES implementation
+
+CLASS lcl_json_parser DEFINITION
+*  PUBLIC
+  INHERITING FROM lcl_object
+  FINAL.
+*  create public .
+
+  PUBLIC SECTION.
+
+    CONSTANTS json_token_array_start TYPE c VALUE '['.      "#EC NOTEXT
+    CONSTANTS json_token_array_end TYPE c VALUE ']'.        "#EC NOTEXT
+    CONSTANTS json_token_object_start TYPE c VALUE '{'.     "#EC NOTEXT
+    CONSTANTS json_token_object_end TYPE c VALUE '}'.       "#EC NOTEXT
+    CONSTANTS json_token_name_val_separator TYPE c VALUE ':'. "#EC NOTEXT
+    CONSTANTS json_token_value_separator TYPE c VALUE ','.  "#EC NOTEXT
+    CONSTANTS json_token_string TYPE c VALUE '"'.           "#EC NOTEXT
+    CONSTANTS json_token_escape TYPE c VALUE '\'.           "#EC NOTEXT
+
+    CLASS-METHODS class_constructor .
+    CLASS-METHODS utf8_byte_value
+      IMPORTING
+        char            TYPE char1
+      RETURNING
+        VALUE(returning) TYPE xstring .
+    METHODS deserialize
+      IMPORTING
+        json_string     TYPE string
+      RETURNING
+        VALUE(returning) TYPE REF TO lif_json_value
+      RAISING
+        lcx_json_parse_error .
+    METHODS serialize
+      IMPORTING
+        json_value      TYPE REF TO lif_json_value
+      RETURNING
+        VALUE(returning) TYPE string .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+
+    CLASS-DATA utf8_converter TYPE REF TO cl_abap_conv_out_ce .
+
+    METHODS json_array_to_string
+      IMPORTING
+        json_array      TYPE REF TO lcl_json_array
+      RETURNING
+        VALUE(returning) TYPE string .
+    METHODS json_boolean_to_string
+      IMPORTING
+        json_boolean    TYPE REF TO lcl_json_boolean
+      RETURNING
+        VALUE(returning) TYPE string .
+    METHODS json_number_to_string
+      IMPORTING
+        json_number     TYPE REF TO lcl_json_number
+      RETURNING
+        VALUE(returning) TYPE string .
+    METHODS json_object_to_string
+      IMPORTING
+        json_object     TYPE REF TO lcl_json_object
+      RETURNING
+        VALUE(returning) TYPE string .
+    METHODS json_string_to_string
+      IMPORTING
+        json_string     TYPE REF TO lcl_json_string
+      RETURNING
+        VALUE(returning) TYPE string .
+    METHODS _substring
+      IMPORTING
+        thestring       TYPE string
+        beginindex      TYPE i
+        endindex        TYPE i OPTIONAL
+      RETURNING
+        VALUE(returning) TYPE string .
+ENDCLASS. "lCL_JSON_PARSER definition
+
+CLASS lcx_clonenotsupported IMPLEMENTATION.
+************************************************************************
+  METHOD constructor.
+************************************************************************
+    CALL METHOD super->constructor
+      EXPORTING
+        textid   = textid
+        previous = previous
+        message  = message.
+  ENDMETHOD.
+ENDCLASS. "lCX_CLONENOTSUPPORTED implementation
+
+CLASS lcx_unsupportedoperation DEFINITION
+*  public
+  INHERITING FROM lcx_runtimeexception
+  FINAL.
+*  create public .
+
+  PUBLIC SECTION.
+
+    METHODS constructor
+      IMPORTING
+        textid   LIKE textid OPTIONAL
+        previous LIKE previous OPTIONAL
+        message  TYPE string OPTIONAL .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCX_UNSUPPORTEDOPERATION definition
+
+CLASS lcx_staticexception IMPLEMENTATION.
+************************************************************************
+  METHOD constructor.
+************************************************************************
+    CALL METHOD super->constructor
+      EXPORTING
+        textid   = textid
+        previous = previous.
+    me->message = message .
+  ENDMETHOD.
+ENDCLASS. "lCX_STATICEXCEPTION implementation
+
+
+CLASS lcx_runtimeexception IMPLEMENTATION.
+************************************************************************
+  METHOD constructor.
+************************************************************************
+    CALL METHOD super->constructor
+      EXPORTING
+        textid   = textid
+        previous = previous.
+    me->message = message .
+  ENDMETHOD.
+ENDCLASS. "lCX_RUNTIMEEXCEPTION implementation
+
+
+CLASS lcx_unsupportedoperation IMPLEMENTATION.
+************************************************************************
+  METHOD constructor.
+************************************************************************
+    CALL METHOD super->constructor
+      EXPORTING
+        textid   = textid
+        previous = previous
+        message  = message.
+  ENDMETHOD.
+ENDCLASS. "lCX_UNSUPPORTEDOPERATION implementation
+CLASS lcl_object IMPLEMENTATION.
+  METHOD clone.
+************************************************************************
+    RAISE EXCEPTION TYPE lcx_clonenotsupported.
+
+    " Any implementation of this method MUST follow these rules:
+    " - TRUE:   x->clone( ) <> x
+    " - TRUE:   x->clone( )->getclass( ) = x->getclass( )
+    " - TRUE:   x->clone( )->equals( x )
+    " - The clone object should be independent of the original object, which means
+    "   you must also clone all mutable objects which comprise the internal "deep structure"
+    "   of the object being cloned.
+    " - In case of arrays only the array object must be cloned and not the objects inside
+    "   the array, resulting in a "shallow copy"
+    "
+    " IMPORTANT
+    " This method does NOT behave like it does in Java.
+    " The difference is, it will NEVER return an instance of an object (in Java, when a class
+    " implements the Cloneable interface, this method will return an instance of that class).
+    " This means you CANNOT rely on calling super->clone( ) to get an instance,
+    " if none of the superclasses implement the clone( ) method.
+    " In practice, this means you will have to create the instance yourself if you want to
+    " make your objects cloneable. In the case of abstract classes this won't be possible,
+    " which means you cannot use super->clone( ) and you have to write an implementation in
+    " each concrete subclass.
+
+  ENDMETHOD.
+************************************************************************
+  METHOD equals.
+************************************************************************
+    " Only compare reference by default
+    IF me = obj.
+      returning = abap_true.
+      RETURN.
+    ELSE.
+      returning = abap_false.
+      RETURN.
+    ENDIF.
+
+    " Override this method to implement a more specific comparison.
+
+  ENDMETHOD.
+************************************************************************
+  METHOD getclass.
+************************************************************************
+    returning ?= cl_abap_typedescr=>describe_by_object_ref( me ).
+  ENDMETHOD.
+ENDCLASS.
+CLASS lcl_abstractcollection IMPLEMENTATION.
+************************************************************************
+  METHOD lif_collection~add.
+************************************************************************
+    RAISE EXCEPTION TYPE lcx_unsupportedoperation.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_collection~addall.
+************************************************************************
+    DATA modified TYPE abap_bool.
+    modified = abap_false.
+    DATA iterator TYPE REF TO lif_iterator.
+    iterator = collection->iterator( ).
+    WHILE iterator->hasnext( ) = abap_true.
+      DATA next TYPE REF TO lcl_object.
+      next = iterator->next( ).
+      IF me->add( next ) = abap_true.
+        modified = abap_true.
+      ENDIF.
+    ENDWHILE.
+    returning = modified.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_collection~clear.
+************************************************************************
+    DATA iterator TYPE REF TO lif_iterator.
+    iterator = me->iterator( ).
+    WHILE iterator->hasnext( ) = abap_true.
+      iterator->next( ).
+      iterator->remove( ).
+    ENDWHILE.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_collection~contains.
+************************************************************************
+    DATA iterator TYPE REF TO lif_iterator.
+    iterator = me->iterator( ).
+    IF object IS NOT BOUND.
+      WHILE iterator->hasnext( ) = abap_true.
+        IF object = iterator->next( ).
+          returning = abap_true.
+          RETURN.
+        ENDIF.
+      ENDWHILE.
+    ELSE.
+      WHILE iterator->hasnext( ) = abap_true.
+        DATA obj TYPE REF TO lcl_object.
+        obj = iterator->next( ).
+        IF obj->equals( object ) = abap_true.
+          returning = abap_true.
+          RETURN.
+        ENDIF.
+      ENDWHILE.
+    ENDIF.
+    " Return false if the object is not found
+    returning = abap_false.
+    RETURN.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_collection~containsall.
+************************************************************************
+    DATA iterator TYPE REF TO lif_iterator.
+    iterator = collection->iterator( ).
+    WHILE iterator->hasnext( ) = abap_true.
+      DATA next TYPE REF TO lcl_object.
+      next = iterator->next( ).
+      IF me->contains( next ) = abap_false.
+        returning = abap_false.
+        RETURN.
+      ENDIF.
+    ENDWHILE.
+    returning = abap_true.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_collection~isempty.
+************************************************************************
+    IF me->size( ) = 0.
+      returning = abap_true.
+      RETURN.
+    ENDIF.
+    returning = abap_false.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_collection~remove.
+************************************************************************
+    DATA iterator TYPE REF TO lif_iterator.
+    iterator = me->iterator( ).
+    IF object IS NOT BOUND.
+      WHILE iterator->hasnext( ) = abap_true.
+        IF object = iterator->next( ).
+          iterator->remove( ).
+          returning = abap_true.
+          RETURN.
+        ENDIF.
+      ENDWHILE.
+    ELSE.
+      WHILE iterator->hasnext( ) = abap_true.
+        DATA obj TYPE REF TO lcl_object.
+        obj = iterator->next( ).
+        IF obj->equals( object ) = abap_true.
+          iterator->remove( ).
+          returning = abap_true.
+          RETURN.
+        ENDIF.
+      ENDWHILE.
+    ENDIF.
+    " Return false if the object is not found
+    returning = abap_false.
+    RETURN.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_collection~removeall.
+************************************************************************
+    DATA modified TYPE abap_bool.
+    modified = abap_false.
+    DATA iterator TYPE REF TO lif_iterator.
+    iterator = me->iterator( ).
+    WHILE iterator->hasnext( ) = abap_true.
+      DATA next TYPE REF TO lcl_object.
+      next = iterator->next( ).
+      IF collection->contains( next ) = abap_true.
+        iterator->remove( ).
+        modified = abap_true.
+      ENDIF.
+    ENDWHILE.
+    returning = modified.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_collection~retainall.
+************************************************************************
+    DATA modified TYPE abap_bool.
+    modified = abap_false.
+    DATA iterator TYPE REF TO lif_iterator.
+    iterator = me->iterator( ).
+    WHILE iterator->hasnext( ) = abap_true.
+      DATA next TYPE REF TO lcl_object.
+      next = iterator->next( ).
+      IF collection->contains( next ) = abap_false.
+        iterator->remove( ).
+        modified = abap_true.
+      ENDIF.
+    ENDWHILE.
+    returning = modified.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_collection~toarray.
+************************************************************************
+    DATA array TYPE ty_object_array.
+    DATA iterator TYPE REF TO lif_iterator.
+    iterator = me->iterator( ).
+    WHILE iterator->hasnext( ) = abap_true.
+      DATA next TYPE REF TO lcl_object.
+      next = iterator->next( ).
+      APPEND next TO array.
+    ENDWHILE.
+    returning = array.
+  ENDMETHOD.
+ENDCLASS. "lCL_ABSTRACTCOLLECTION implementation
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_iterator IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_iterator IMPLEMENTATION.
+  METHOD constructor.
+    super->constructor( ).
+    me->enclosinglist = enclosinglist.
+    me->expectedmodcount = enclosinglist->modcount.
+  ENDMETHOD.                    "constructor
+  METHOD lif_iterator~hasnext.
+    IF me->cursor <> enclosinglist->size( ).
+      returning = abap_true.
+      RETURN.
+    ELSE.
+      returning = abap_false.
+      RETURN.
+    ENDIF.
+  ENDMETHOD.                    "lif_iterator~HASNEXT
+  METHOD lif_iterator~next.
+    me->checkforcomodification( ).
+    TRY.
+        DATA next TYPE REF TO lcl_object.
+        next = enclosinglist->get( me->cursor ).
+        me->lastret = me->cursor.
+        me->cursor = me->cursor + 1.
+        returning = next.
+        RETURN.
+      CATCH lcx_indexoutofbounds.
+        me->checkforcomodification( ). " Check if this exception is caused by a concurrent modification
+        RAISE EXCEPTION TYPE lcx_nosuchelement. " Not a concurrent modification, element simply not found
+    ENDTRY.
+  ENDMETHOD.                    "lif_iterator~NEXT
+  METHOD lif_iterator~remove.
+    IF lastret = -1.
+      RAISE EXCEPTION TYPE lcx_illegalstate.
+    ENDIF.
+    me->checkforcomodification( ).
+    TRY.
+        enclosinglist->removeat( index = me->lastret ).
+        IF me->lastret < me->cursor.
+          me->cursor = me->cursor - 1.
+        ENDIF.
+        me->lastret = -1.
+        me->expectedmodcount = enclosinglist->modcount.
+      CATCH lcx_indexoutofbounds.
+        RAISE EXCEPTION TYPE lcx_concurrmodification.
+    ENDTRY.
+  ENDMETHOD.                    "lif_iterator~REMOVE
+  METHOD checkforcomodification.
+    IF enclosinglist->modcount <> me->expectedmodcount.
+      RAISE EXCEPTION TYPE lcx_concurrmodification.
+    ENDIF.
+  ENDMETHOD.                    "checkforcomodification
+ENDCLASS.                    "lcl_iterator IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_listiterator IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_listiterator IMPLEMENTATION.
+  METHOD constructor.
+    super->constructor( enclosinglist ).
+    me->cursor = index.
+  ENDMETHOD.                    "constructor
+  METHOD lif_listiterator~add.
+    me->checkforcomodification( ).
+    TRY.
+        enclosinglist->addat( index = me->cursor element = element ).
+        me->cursor = me->cursor + 1.
+        me->lastret = -1.
+        me->expectedmodcount = enclosinglist->modcount.
+      CATCH lcx_indexoutofbounds.
+        RAISE EXCEPTION TYPE lcx_concurrmodification.
+    ENDTRY.
+  ENDMETHOD.                    "lif_listiterator~ADD
+  METHOD lif_listiterator~hasprevious.
+    IF me->cursor <> 0.
+      returning = abap_true.
+      RETURN.
+    ELSE.
+      returning = abap_false.
+      RETURN.
+    ENDIF.
+  ENDMETHOD.                    "lif_listiterator~HASPREVIOUS
+  METHOD lif_listiterator~nextindex.
+    returning = me->cursor.
+    RETURN.
+  ENDMETHOD.                    "lif_listiterator~NEXTINDEX
+  METHOD lif_listiterator~previous.
+    me->checkforcomodification( ).
+    TRY.
+        DATA previousindex TYPE i.
+        previousindex = me->cursor - 1.
+        DATA previous TYPE REF TO lcl_object.
+        previous = enclosinglist->get( previousindex ).
+        me->lastret = previousindex.
+        me->cursor = previousindex.
+        returning = previous.
+        RETURN.
+      CATCH lcx_indexoutofbounds.
+        me->checkforcomodification( ). " Check if this exception is caused by a concurrent modification
+        RAISE EXCEPTION TYPE lcx_nosuchelement. " Not a concurrent modification, element simply not found
+    ENDTRY.
+  ENDMETHOD.                    "lif_listiterator~PREVIOUS
+  METHOD lif_listiterator~previousindex.
+    returning = me->cursor - 1.
+    RETURN.
+  ENDMETHOD.                    "lif_listiterator~PREVIOUSINDEX
+  METHOD lif_listiterator~set.
+    IF lastret = -1.
+      RAISE EXCEPTION TYPE lcx_illegalstate.
+    ENDIF.
+    me->checkforcomodification( ).
+    TRY.
+        enclosinglist->set( index = me->lastret element = element ).
+        me->expectedmodcount = enclosinglist->modcount.
+      CATCH lcx_indexoutofbounds.
+        RAISE EXCEPTION TYPE lcx_concurrmodification.
+    ENDTRY.
+  ENDMETHOD.                    "lif_listiterator~SET
+ENDCLASS.                    "lcl_listiterator IMPLEMENTATION
+
+CLASS lcl_abstractlist IMPLEMENTATION.
+************************************************************************
+  METHOD lif_collection~add.
+************************************************************************
+    DATA index TYPE i.
+    index = me->size( ).
+    me->addat( index = index element = element ).
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_collection~clear.
+************************************************************************
+    DATA size TYPE i.
+    size = me->size( ).
+    me->removerange( fromindex = 0 toindex = size ).
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_collection~iterator.
+************************************************************************
+    DATA iterator TYPE REF TO lcl_iterator.
+    CREATE OBJECT iterator
+      EXPORTING
+        enclosinglist = me.
+    returning = iterator.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_list~addat.
+************************************************************************
+    RAISE EXCEPTION TYPE lcx_unsupportedoperation.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_list~addallat.
+************************************************************************
+    DATA newindex TYPE i.
+    newindex = index.
+    DATA modified TYPE abap_bool.
+    modified = abap_false.
+    DATA iterator TYPE REF TO lif_iterator.
+    iterator = collection->iterator( ).
+    WHILE iterator->hasnext( ) = abap_true.
+      DATA next TYPE REF TO lcl_object.
+      next = iterator->next( ).
+      me->addat( index = newindex element = next ).
+      newindex = newindex + 1.
+      modified = abap_true.
+    ENDWHILE.
+    returning = modified.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_list~indexof.
+************************************************************************
+    " Returns the index of the first match
+    DATA listiterator TYPE REF TO lif_listiterator.
+    listiterator = me->listiterator( ).
+    IF object IS NOT BOUND.
+      WHILE listiterator->hasnext( ) = abap_true.
+        IF object = listiterator->next( ).
+          returning = listiterator->previousindex( ).
+          RETURN.
+        ENDIF.
+      ENDWHILE.
+    ELSE.
+      WHILE listiterator->hasnext( ) = abap_true.
+        DATA obj TYPE REF TO lcl_object.
+        obj = listiterator->next( ).
+        IF obj->equals( object ) = abap_true.
+          returning = listiterator->previousindex( ).
+          RETURN.
+        ENDIF.
+      ENDWHILE.
+    ENDIF.
+    " Return -1 if the object is not found
+    returning = -1.
+    RETURN.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_list~lastindexof.
+************************************************************************
+    " Returns the index of the first match
+    DATA index TYPE i.
+    index = me->size( ).
+    DATA listiterator TYPE REF TO lif_listiterator.
+    listiterator = me->listiteratorat( index ).
+    IF object IS NOT BOUND.
+      WHILE listiterator->hasprevious( ) = abap_true.
+        IF object = listiterator->previous( ).
+          returning = listiterator->nextindex( ).
+          RETURN.
+        ENDIF.
+      ENDWHILE.
+    ELSE.
+      WHILE listiterator->hasprevious( ) = abap_true.
+        DATA obj TYPE REF TO lcl_object.
+        obj = listiterator->previous( ).
+        IF obj->equals( object ) = abap_true.
+          returning = listiterator->nextindex( ).
+          RETURN.
+        ENDIF.
+      ENDWHILE.
+    ENDIF.
+    " Return -1 if the object is not found
+    returning = -1.
+    RETURN.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_list~listiterator.
+************************************************************************
+    returning = me->listiteratorat( 0 ).
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_list~listiteratorat.
+************************************************************************
+    IF index < 0 OR index > me->size( ).
+      RAISE EXCEPTION TYPE lcx_indexoutofbounds.
+    ENDIF.
+    DATA listiterator TYPE REF TO lcl_listiterator.
+    CREATE OBJECT listiterator
+      EXPORTING
+        enclosinglist = me
+        index         = index.
+    returning = listiterator.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_list~removeat.
+************************************************************************
+    RAISE EXCEPTION TYPE lcx_unsupportedoperation.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_list~set.
+************************************************************************
+    RAISE EXCEPTION TYPE lcx_unsupportedoperation.
+  ENDMETHOD.
+************************************************************************
+  METHOD removerange.
+************************************************************************
+    DATA listiterator TYPE REF TO lif_listiterator.
+    listiterator = me->listiteratorat( fromindex ).
+    DATA count TYPE i.
+    count = toindex - fromindex.
+    IF count > 0.
+      DO count TIMES.
+        listiterator->next( ).
+        listiterator->remove( ).
+      ENDDO.
+    ENDIF.
+  ENDMETHOD.
+************************************************************************
+  METHOD equals.
+************************************************************************
+    IF me = obj.
+      returning = abap_true.
+      RETURN.
+    ENDIF.
+    DATA otherlist TYPE REF TO lif_list.
+    TRY.
+        otherlist ?= obj.
+      CATCH cx_sy_move_cast_error.
+        returning = abap_false.
+        RETURN.
+    ENDTRY.
+    " Compare each element in both lists until one of the lists (or both) have no more elements
+    DATA it_thislist TYPE REF TO lif_listiterator.
+    DATA it_otherlist TYPE REF TO lif_listiterator.
+    it_thislist = me->listiterator( ).
+    it_otherlist = otherlist->listiterator( ).
+    WHILE ( it_thislist->hasnext( ) = abap_true ) AND ( it_otherlist->hasnext( ) = abap_true ).
+      DATA obj_thislist TYPE REF TO lcl_object.
+      DATA obj_otherlist TYPE REF TO lcl_object.
+      obj_thislist = it_thislist->next( ).
+      obj_otherlist = it_otherlist->next( ).
+      IF obj_thislist IS NOT BOUND.
+        IF obj_otherlist IS BOUND.
+          " obj_thislist is null, but obj_otherlist is not null
+          returning = abap_false.
+          RETURN.
+        ENDIF.
+      ELSE.
+        IF obj_otherlist IS NOT BOUND.
+          " obj_thislist is not null, but obj_otherlist is null
+          returning = abap_false.
+          RETURN.
+        ENDIF.
+        " both are not null, compare using equals method
+        IF obj_thislist->equals( obj_otherlist ) = abap_false.
+          returning = abap_false.
+          RETURN.
+        ENDIF.
+      ENDIF.
+    ENDWHILE.
+    " If one of the lists still has remaining elements at this point, then they are not equal
+    IF ( it_thislist->hasnext( ) = abap_true ) OR ( it_otherlist->hasnext( ) = abap_true ).
+      returning = abap_false.
+      RETURN.
+    ENDIF.
+    " Lists are equal
+    returning = abap_true.
+  ENDMETHOD.
+ENDCLASS. "lCL_ABSTRACTLIST implementation
+CLASS lcl_arraylist IMPLEMENTATION.
+************************************************************************
+  METHOD lif_collection~add.
+************************************************************************
+    me->modcount = me->modcount + 1.
+    me->listsize = me->listsize + 1.
+    APPEND element TO me->elementdata.
+    returning = abap_true.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_collection~addall.
+************************************************************************
+    DATA elementdata_to_add TYPE ty_object_array.
+    elementdata_to_add = collection->toarray( ).
+    DATA elementdata_to_add_size TYPE i.
+    DESCRIBE TABLE elementdata_to_add LINES elementdata_to_add_size.
+    me->modcount = me->modcount + 1.
+    me->listsize = me->listsize + elementdata_to_add_size.
+    APPEND LINES OF elementdata_to_add TO me->elementdata.
+    IF elementdata_to_add_size > 0.
+      returning = abap_true.
+      RETURN.
+    ELSE.
+      returning = abap_false.
+      RETURN.
+    ENDIF.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_collection~clear.
+************************************************************************
+    me->modcount = me->modcount + 1.
+    FREE me->elementdata.
+    me->listsize = 0.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_collection~contains.
+************************************************************************
+    IF me->indexof( object ) >= 0.
+      returning = abap_true.
+      RETURN.
+    ELSE.
+      returning = abap_false.
+      RETURN.
+    ENDIF.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_collection~isempty.
+************************************************************************
+    IF me->listsize = 0.
+      returning = abap_true.
+      RETURN.
+    ENDIF.
+    returning = abap_false.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_collection~remove.
+************************************************************************
+    " Returns the index of the first match
+    IF object IS NOT BOUND.
+      LOOP AT me->elementdata TRANSPORTING NO FIELDS WHERE table_line IS NOT BOUND.
+        me->modcount = me->modcount + 1.
+        me->listsize = me->listsize - 1.
+        DELETE me->elementdata. " Removes the record at the current loop index
+        returning = abap_true.
+        RETURN.
+      ENDLOOP.
+    ELSE.
+      DATA i TYPE i VALUE 0.
+      WHILE i < me->listsize.
+        DATA tableindex TYPE i.
+        tableindex = i + 1.
+        DATA obj TYPE REF TO lcl_object.
+        READ TABLE me->elementdata INTO obj INDEX tableindex.
+        IF obj->equals( object ) = abap_true.
+          me->modcount = me->modcount + 1.
+          me->listsize = me->listsize - 1.
+          DELETE me->elementdata INDEX tableindex.
+          returning = abap_true.
+          RETURN.
+        ENDIF.
+        i = i + 1.
+      ENDWHILE.
+    ENDIF.
+    " Return false if the object is not found
+    returning = abap_false.
+    RETURN.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_collection~size.
+************************************************************************
+    returning = me->listsize.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_collection~toarray.
+************************************************************************
+    returning = me->elementdata.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_list~addat.
+************************************************************************
+    IF index > me->listsize OR index < 0.
+      RAISE EXCEPTION TYPE lcx_indexoutofbounds.
+    ENDIF.
+    me->modcount = me->modcount + 1.
+    me->listsize = me->listsize + 1.
+    " The first element in a list has index 0.
+    " Internal tables however, start with index 1.
+    " So in order to insert at the right index, the number used to insert into the internal table by index, equals the specified index + 1.
+    DATA tableindex TYPE i.
+    tableindex = index + 1.
+    INSERT element INTO me->elementdata INDEX tableindex.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_list~addallat.
+************************************************************************
+    IF index > me->listsize OR index < 0.
+      RAISE EXCEPTION TYPE lcx_indexoutofbounds.
+    ENDIF.
+    DATA elementdata_to_add TYPE ty_object_array.
+    elementdata_to_add = collection->toarray( ).
+    DATA elementdata_to_add_size TYPE i.
+    DESCRIBE TABLE elementdata_to_add LINES elementdata_to_add_size.
+    me->modcount = me->modcount + 1.
+    me->listsize = me->listsize + elementdata_to_add_size.
+    " The first element in a list has index 0.
+    " Internal tables however, start with index 1.
+    " So in order to insert at the right index, the number used to insert into the internal table by index, equals the specified index + 1.
+    DATA tableindex TYPE i.
+    tableindex = index + 1.
+    INSERT LINES OF elementdata_to_add INTO me->elementdata INDEX tableindex.
+    IF elementdata_to_add_size > 0.
+      returning = abap_true.
+      RETURN.
+    ELSE.
+      returning = abap_false.
+      RETURN.
+    ENDIF.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_list~get.
+************************************************************************
+    me->rangecheck( index ).
+    " The first element in a list has index 0.
+    " Internal tables however, start with index 1.
+    " So in order to retrieve the correct element, the number used to read the internal table by index, equals the specified index + 1.
+    DATA tableindex TYPE i.
+    tableindex = index + 1.
+    DATA element TYPE REF TO lcl_object.
+    READ TABLE me->elementdata INTO element INDEX tableindex.
+    returning = element.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_list~indexof.
+************************************************************************
+    " Returns the index of the first match
+    IF object IS NOT BOUND.
+      LOOP AT me->elementdata TRANSPORTING NO FIELDS WHERE table_line IS NOT BOUND.
+        returning = sy-tabix - 1. " Table index is 1 higher than array index
+        CLEAR sy-tabix.
+        RETURN.
+      ENDLOOP.
+    ELSE.
+      DATA i TYPE i VALUE 0.
+      WHILE i < me->listsize.
+        DATA tableindex TYPE i.
+        tableindex = i + 1.
+        DATA obj TYPE REF TO lcl_object.
+        READ TABLE me->elementdata INTO obj INDEX tableindex.
+        IF obj->equals( object ) = abap_true.
+          returning = i.
+          RETURN.
+        ENDIF.
+        i = i + 1.
+      ENDWHILE.
+    ENDIF.
+    " Return -1 if the object is not found
+    returning = -1.
+    RETURN.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_list~lastindexof.
+************************************************************************
+    " Returns the index of the last match
+    IF object IS NOT BOUND.
+      DATA isfound TYPE abap_bool VALUE abap_false.
+      LOOP AT me->elementdata TRANSPORTING NO FIELDS WHERE table_line IS NOT BOUND.
+        isfound = abap_true.
+        returning = sy-tabix - 1. " Table index is 1 higher than array index
+        " Do not exit loop, we want the index of the last match
+      ENDLOOP.
+      IF isfound = abap_true.
+        CLEAR sy-tabix.
+        RETURN.
+      ENDIF.
+    ELSE.
+      DATA i TYPE i.
+      i = me->listsize - 1.
+      WHILE i >= 0.
+        DATA tableindex TYPE i.
+        tableindex = i + 1.
+        DATA obj TYPE REF TO lcl_object.
+        READ TABLE me->elementdata INTO obj INDEX tableindex.
+        IF obj->equals( object ) = abap_true.
+          returning = i.
+          RETURN.
+        ENDIF.
+        i = i - 1.
+      ENDWHILE.
+    ENDIF.
+    " Return -1 if the object is not found
+    returning = -1.
+    RETURN.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_list~removeat.
+************************************************************************
+    me->rangecheck( index ).
+    me->modcount = me->modcount + 1.
+    " The first element in a list has index 0.
+    " Internal tables however, start with index 1.
+    " So in order to retrieve the correct element, the number used to read the internal table by index, equals the specified index + 1.
+    DATA tableindex TYPE i.
+    tableindex = index + 1.
+    DATA element TYPE REF TO lcl_object.
+    READ TABLE me->elementdata INTO element INDEX tableindex. " Read the element to return it after deleting it
+    DELETE me->elementdata INDEX tableindex. " Delete the element
+    me->listsize = me->listsize - 1.
+    returning = element.
+    RETURN.
+  ENDMETHOD.
+************************************************************************
+  METHOD lif_list~set.
+************************************************************************
+    me->rangecheck( index ).
+    " The first element in a list has index 0.
+    " Internal tables however, start with index 1.
+    " So in order to retrieve the correct element, the number used to read the internal table by index, equals the specified index + 1.
+    DATA tableindex TYPE i.
+    tableindex = index + 1.
+    DATA oldelement TYPE REF TO lcl_object.
+    READ TABLE me->elementdata INTO oldelement INDEX tableindex. " Read the element to return it after replacing it
+    MODIFY me->elementdata FROM element INDEX tableindex. " Replace the element
+    returning = oldelement.
+    RETURN.
+  ENDMETHOD.
+************************************************************************
+  METHOD clone.
+************************************************************************
+    DATA result TYPE REF TO lcl_arraylist.
+    CREATE OBJECT result
+      EXPORTING
+        collection = me.
+    returning = result.
+  ENDMETHOD.
+************************************************************************
+  METHOD removerange.
+************************************************************************
+    me->rangecheck( fromindex ).
+    me->rangecheck( toindex ).
+    me->modcount = me->modcount + 1.
+    " The first element in a list has index 0.
+    " Internal tables however, start with index 1.
+    " So in order to retrieve the correct element, the number used to read the internal table by index, equals the specified index + 1.
+    DATA tableindex TYPE i.
+    tableindex = fromindex + 1.
+    DATA count TYPE i.
+    count = toindex - fromindex.
+    DO count TIMES.
+      DELETE me->elementdata INDEX tableindex. " Delete the element
+      tableindex = tableindex + 1.
+    ENDDO.
+    me->listsize = me->listsize - count.
+  ENDMETHOD.
+************************************************************************
+  METHOD constructor.
+************************************************************************
+    super->constructor( ).
+    IF collection IS BOUND.
+      me->elementdata = collection->toarray( ).
+      DESCRIBE TABLE me->elementdata LINES me->listsize.
+    ENDIF.
+  ENDMETHOD.
+************************************************************************
+  METHOD rangecheck.
+************************************************************************
+    IF index >= me->listsize.
+      RAISE EXCEPTION TYPE lcx_indexoutofbounds.
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS. "lCL_ARRAYLIST implementation
+
+
+CLASS lcl_json_parser IMPLEMENTATION.
+************************************************************************
+  METHOD class_constructor.
+************************************************************************
+    utf8_converter = cl_abap_conv_out_ce=>create( encoding = 'UTF-8' ).
+  ENDMETHOD.
+************************************************************************
+  METHOD deserialize.
+************************************************************************
+    DATA msg TYPE string.
+
+    DATA result TYPE REF TO lif_json_value.
+    DATA parent TYPE REF TO lif_json_value.
+    DATA state TYPE c.
+    DATA state_stack TYPE STANDARD TABLE OF c.
+    DATA value_stack TYPE STANDARD TABLE OF REF TO lif_json_value.
+    DATA stack_depth TYPE i VALUE 1.
+    DATA position TYPE i VALUE 0.
+
+    " Helper variables
+    DATA parent_object TYPE REF TO lcl_json_object.
+    DATA parent_array TYPE REF TO lcl_json_array.
+    DATA json_pair TYPE REF TO lcl_json_pair.
+    DATA json_pair_name TYPE REF TO lif_json_value.
+    DATA json_pair_name_string TYPE REF TO lcl_json_string.
+
+    " The main loop; process each character in the received JSON string
+    DATA limit TYPE i.
+    limit = strlen( json_string ).
+    WHILE position < limit.
+      " Get the character at the current position
+      DATA char TYPE c.
+      DATA byte_value TYPE xstring.
+      char = json_string+position(1).
+      byte_value = me->utf8_byte_value( char ).
+
+      " Ignore spaces and control characters
+      IF byte_value <= '20' OR
+         ( byte_value >= '7F' AND byte_value <= 'C2A0' ).
+        position = position + 1.
+        CONTINUE.
+      ENDIF.
+
+      " Process the character
+      CASE char.
+
+        WHEN json_token_object_start. " Start of object
+          INSERT state INTO state_stack INDEX stack_depth.
+          INSERT parent INTO value_stack INDEX stack_depth.
+          stack_depth = stack_depth + 1.
+          CREATE OBJECT parent TYPE lcl_json_object.
+          CLEAR result.
+          state = char.
+
+        WHEN json_token_object_end. " End of object
+          IF state = json_token_name_val_separator.
+            " End of object reached and state is a name/value separator
+            " This means the parent is an object and the result is a value
+            " It also means the value stack has a string (name) on top
+            " - Get the pair name
+            stack_depth = stack_depth - 1.
+            READ TABLE value_stack INTO json_pair_name INDEX stack_depth.
+            json_pair_name_string ?= json_pair_name.
+            " - Create the pair
+            CREATE OBJECT json_pair
+              EXPORTING
+                name  = json_pair_name_string
+                value = result.
+            " - Add the pair to the parent
+            parent_object ?= parent.
+            parent_object->add( json_pair ).
+            CLEAR: parent_object, json_pair_name, json_pair_name_string, json_pair.
+            " Set state to its previous value
+            READ TABLE state_stack INTO state INDEX stack_depth.
+          ENDIF.
+          IF state = json_token_object_start.
+            " End of object reached and state is the begin of an object
+            " Parent becomes the result (we could be finished here)...
+            result = parent.
+            " ...and set the parent and state to their previous values
+            stack_depth = stack_depth - 1.
+            READ TABLE state_stack INTO state INDEX stack_depth.
+            READ TABLE value_stack INTO parent INDEX stack_depth.
+          ELSE.
+            " Can only reach end of object if state is the start of an object
+            MESSAGE e002(ljson) WITH position json_token_object_end INTO msg.
+            RAISE EXCEPTION TYPE lcx_json_parse_error
+              EXPORTING
+                message = msg.
+          ENDIF.
+
+        WHEN json_token_array_start. " Start of array
+          INSERT state INTO state_stack INDEX stack_depth.
+          INSERT parent INTO value_stack INDEX stack_depth.
+          stack_depth = stack_depth + 1.
+          CREATE OBJECT parent TYPE lcl_json_array.
+          CLEAR result.
+          state = char.
+
+        WHEN json_token_array_end. " End of array
+          IF state = json_token_array_start.
+            " End of array reached and state is the start of an array
+            " This means the parent is an array and the result is a value
+            parent_array ?= parent.
+            IF result IS BOUND. " Only add the result to the array if its bound
+              parent_array->add( result ).
+            ENDIF.
+            CLEAR parent_array.
+            " Parent becomes the result (we could be finished here)...
+            result = parent.
+            " ...and set the parent and state to their previous values
+            stack_depth = stack_depth - 1.
+            READ TABLE state_stack INTO state INDEX stack_depth.
+            READ TABLE value_stack INTO parent INDEX stack_depth.
+          ELSE.
+            " Can only reach end of array if state is the start of an array
+            MESSAGE e002(ljson) WITH position json_token_array_end INTO msg.
+            RAISE EXCEPTION TYPE lcx_json_parse_error
+              EXPORTING
+                message = msg.
+          ENDIF.
+
+        WHEN json_token_value_separator. " Value separator
+          " Cannot reach a value separator when there is no result yet
+          IF result IS NOT BOUND.
+            MESSAGE e002(ljson) WITH position json_token_value_separator INTO msg.
+            RAISE EXCEPTION TYPE lcx_json_parse_error
+              EXPORTING
+                message = msg.
+          ENDIF.
+          IF state = json_token_name_val_separator.
+            " Value separator reached and state is a name/value separator
+            " This means the parent is an object and the result is a value
+            " It also means the value stack has a string (name) on top
+            " - Get the pair name
+            stack_depth = stack_depth - 1.
+            READ TABLE value_stack INTO json_pair_name INDEX stack_depth.
+            json_pair_name_string ?= json_pair_name.
+            " - Create the pair
+            CREATE OBJECT json_pair
+              EXPORTING
+                name  = json_pair_name_string
+                value = result.
+            " - Add the pair to the parent
+            parent_object ?= parent.
+            parent_object->add( json_pair ).
+            CLEAR: parent_object, json_pair_name, json_pair_name_string, json_pair.
+            " Set state to its previous value
+            READ TABLE state_stack INTO state INDEX stack_depth.
+            " Clear the result because there should be another value coming after this
+            CLEAR result.
+          ELSEIF state = json_token_array_start.
+            " Value separator reached and state is the start of an array
+            " This means the parent is an array and the result is a value
+            parent_array ?= parent.
+            parent_array->add( result ).
+            CLEAR parent_array.
+            " Keep state the same while we're inside an array
+            " Clear the result because there should be another value coming after this
+            CLEAR result.
+          ELSE.
+            MESSAGE e002(ljson) WITH position json_token_value_separator INTO msg.
+            RAISE EXCEPTION TYPE lcx_json_parse_error
+              EXPORTING
+                message = msg.
+          ENDIF.
+
+        WHEN json_token_name_val_separator. " Name/value separator
+          " Can only reach a name/value separator while we're inside an object
+          IF state = json_token_object_start.
+            " Name/value separator reached and state is the start of an object
+            " This means the parent is an object and the result is a string (name)
+            INSERT state INTO state_stack INDEX stack_depth.
+            INSERT result INTO value_stack INDEX stack_depth.
+            stack_depth = stack_depth + 1.
+            state = char.
+            " Clear the result because there should be a value coming after this
+            CLEAR result.
+          ELSE.
+            MESSAGE e002(ljson) WITH position json_token_name_val_separator INTO msg.
+            RAISE EXCEPTION TYPE lcx_json_parse_error
+              EXPORTING
+                message = msg.
+          ENDIF.
+
+        WHEN json_token_string. " String value
+          " Process the entire string value before continuing the main loop
+          DATA string_start_position TYPE i.
+          DATA previous_was_json_token_escape TYPE abap_bool.
+          DATA is_escaped_string TYPE abap_bool.
+          string_start_position = position + 1. " Skip the first character since it's the string token
+          previous_was_json_token_escape = abap_false.
+          is_escaped_string = abap_false.
+          WHILE position < limit.
+            " Get the next character
+            position = position + 1.
+            char = json_string+position(1).
+            byte_value = me->utf8_byte_value( char ).
+            " Keep looping until another unescaped string separator is found
+            IF previous_was_json_token_escape = abap_true.
+              previous_was_json_token_escape = abap_false.
+              CONTINUE.
+            ELSEIF char = json_token_escape.
+              " The string contains escaped characters
+              is_escaped_string = abap_true.
+              CONTINUE.
+            ELSEIF char = json_token_string.
+              " End of string reached, get its value by retrieving the substring
+              DATA result_string TYPE string.
+              result_string = _substring( thestring = json_string beginindex = string_start_position endindex = position ).
+              IF is_escaped_string = abap_true.
+                " String has escaped characters
+                " Use javascript engine to evaluate the string
+                DATA js_processor_string TYPE REF TO cl_java_script.
+                DATA script_string TYPE string.
+                CONCATENATE `var jsonString = "` result_string `";` INTO script_string. "#EC NOTEXT
+                js_processor_string = cl_java_script=>create( ).
+                js_processor_string->compile( script_name = 'evaljsonstring.js' script = script_string ). "#EC NOTEXT
+                js_processor_string->execute( script_name = 'evaljsonstring.js' ). "#EC NOTEXT
+                result_string = js_processor_string->evaluate( java_script = 'jsonString;' ). "#EC NOTEXT
+              ENDIF.
+              " Set the json string value as result
+              CREATE OBJECT result TYPE lcl_json_string
+                EXPORTING
+                  value = result_string.
+              EXIT. " Exit string value loop
+            ENDIF.
+          ENDWHILE.
+
+        WHEN OTHERS.
+          " Possible values which don't have an indicator are a number, boolean, or null value
+          DATA end4 TYPE i.
+          DATA substring4 TYPE string.
+          end4 = position + 4.
+          substring4 = _substring( thestring = json_string beginindex = position endindex = end4 ).
+          DATA end5 TYPE i.
+          DATA substring5 TYPE string.
+          end5 = position + 5.
+          substring5 = _substring( thestring = json_string beginindex = position endindex = end5 ).
+          IF ( byte_value >= '30' AND byte_value <= '39' ) OR " 0,1,2,3,4,5,6,7,8,9
+               byte_value = '2B' OR byte_value = '2D' OR " + -
+               byte_value = '2E'. " .
+            " Number
+            " Process the entire number value before continuing the main loop
+            DATA num_start_position TYPE i.
+            num_start_position = position.
+            WHILE position < limit.
+              " Get the next character
+              position = position + 1.
+              char = json_string+position(1).
+              byte_value = me->utf8_byte_value( char ).
+              " Keep looping until anything non-number related is found
+              IF ( byte_value >= '30' AND byte_value <= '39' ) OR " 0,1,2,3,4,5,6,7,8,9
+                 byte_value = '2B' OR byte_value = '2D' OR " + -
+                 byte_value = '2E' OR " .
+                 byte_value = '45' OR byte_value = '65'. " e E
+                " Continue number value loop
+                CONTINUE.
+              ELSE.
+                " End of number reached
+                EXIT.
+              ENDIF.
+            ENDWHILE.
+            " Get the number value by retrieving the substring
+            DATA result_num_string TYPE string.
+            result_num_string = _substring( thestring = json_string beginindex = num_start_position endindex = position ).
+            " Convert the string to a float, simply by assigning it to a variable of type F.
+            " This is possible, because the ABAP float notation is identical to
+            " the JSON notation (which is amazing really)
+            DATA result_num TYPE f.
+            result_num = result_num_string.
+            " Set the json number value as result
+            CREATE OBJECT result TYPE lcl_json_number
+              EXPORTING
+                value = result_num.
+            " Go back one step, so the main loop can continue with the next char
+            position = position - 1.
+          ELSEIF substring4 = 'null'.                       "#EC NOTEXT
+            " Null
+            CREATE OBJECT result TYPE lcl_json_null.
+            position = position + 3.
+          ELSEIF substring4 = 'true'.                       "#EC NOTEXT
+            " Boolean, true
+            CREATE OBJECT result TYPE lcl_json_boolean
+              EXPORTING
+                value = abap_true.
+            position = position + 3.
+          ELSEIF substring5 = 'false'.                      "#EC NOTEXT
+            " Boolean, false
+            CREATE OBJECT result TYPE lcl_json_boolean
+              EXPORTING
+                value = abap_false.
+            position = position + 4.
+          ENDIF.
+
+      ENDCASE.
+
+      " Continue to next position
+      position = position + 1.
+    ENDWHILE.
+
+    " Return the result
+    returning = result.
+  ENDMETHOD.
+************************************************************************
+  METHOD json_array_to_string.
+************************************************************************
+    DATA string_value TYPE string.
+    DATA is_first TYPE abap_bool.
+    DATA iterator TYPE REF TO lif_iterator.
+    is_first = abap_true.
+    iterator = json_array->iterator( ).
+    WHILE iterator->hasnext( ) = abap_true.
+      DATA json_value TYPE REF TO lif_json_value.
+      json_value ?= iterator->next( ).
+      DATA value TYPE string.
+      CASE json_value->get_type( ).
+        WHEN lcl_json_types=>type_string.
+          DATA json_string_value TYPE REF TO lcl_json_string.
+          json_string_value ?= json_value.
+          value = me->json_string_to_string( json_string_value ).
+        WHEN lcl_json_types=>type_number.
+          DATA json_number_value TYPE REF TO lcl_json_number.
+          json_number_value ?= json_value.
+          value = me->json_number_to_string( json_number_value ).
+        WHEN lcl_json_types=>type_boolean.
+          DATA json_boolean_value TYPE REF TO lcl_json_boolean.
+          json_boolean_value ?= json_value.
+          value = me->json_boolean_to_string( json_boolean_value ).
+        WHEN lcl_json_types=>type_null.
+          value = `null`.                                   "#EC NOTEXT
+        WHEN lcl_json_types=>type_object.
+          DATA json_object_value TYPE REF TO lcl_json_object.
+          json_object_value ?= json_value.
+          value = me->json_object_to_string( json_object_value ).
+        WHEN lcl_json_types=>type_array.
+          DATA json_array_value TYPE REF TO lcl_json_array.
+          json_array_value ?= json_value.
+          value = me->json_array_to_string( json_array_value ).
+      ENDCASE.
+      IF is_first = abap_true.
+        string_value = value.
+        is_first = abap_false.
+      ELSE.
+        CONCATENATE string_value `, ` value INTO string_value.
+      ENDIF.
+    ENDWHILE.
+    CONCATENATE `[ ` string_value ` ]` INTO string_value.
+    returning = string_value.
+  ENDMETHOD.
+************************************************************************
+  METHOD json_boolean_to_string.
+************************************************************************
+    DATA value TYPE string.
+    IF json_boolean->value = abap_true.
+      value = 'true'.                                       "#EC NOTEXT
+    ELSE.
+      value = 'false'.                                      "#EC NOTEXT
+    ENDIF.
+    returning = value.
+  ENDMETHOD.
+************************************************************************
+  METHOD json_number_to_string.
+************************************************************************
+    DATA value TYPE string.
+    value = json_number->value.
+    returning = value.
+  ENDMETHOD.
+************************************************************************
+  METHOD json_object_to_string.
+************************************************************************
+    DATA string_value TYPE string.
+    DATA is_first TYPE abap_bool.
+    DATA iterator TYPE REF TO lif_iterator.
+    is_first = abap_true.
+    iterator = json_object->iterator( ).
+    WHILE iterator->hasnext( ) = abap_true.
+      DATA json_pair TYPE REF TO lcl_json_pair.
+      json_pair ?= iterator->next( ).
+      " - Name
+      DATA name TYPE string.
+      name = me->json_string_to_string( json_pair->name ).
+      " - Value
+      DATA json_value TYPE REF TO lif_json_value.
+      json_value = json_pair->value.
+      DATA value TYPE string.
+      CASE json_value->get_type( ).
+        WHEN lcl_json_types=>type_string.
+          DATA json_string_value TYPE REF TO lcl_json_string.
+          json_string_value ?= json_value.
+          value = me->json_string_to_string( json_string_value ).
+        WHEN lcl_json_types=>type_number.
+          DATA json_number_value TYPE REF TO lcl_json_number.
+          json_number_value ?= json_value.
+          value = me->json_number_to_string( json_number_value ).
+        WHEN lcl_json_types=>type_boolean.
+          DATA json_boolean_value TYPE REF TO lcl_json_boolean.
+          json_boolean_value ?= json_value.
+          value = me->json_boolean_to_string( json_boolean_value ).
+        WHEN lcl_json_types=>type_null.
+          value = `null`.                                   "#EC NOTEXT
+        WHEN lcl_json_types=>type_object.
+          DATA json_object_value TYPE REF TO lcl_json_object.
+          json_object_value ?= json_value.
+          value = me->json_object_to_string( json_object_value ).
+        WHEN lcl_json_types=>type_array.
+          DATA json_array_value TYPE REF TO lcl_json_array.
+          json_array_value ?= json_value.
+          value = me->json_array_to_string( json_array_value ).
+      ENDCASE.
+      IF is_first = abap_true.
+        CONCATENATE name ` : ` value INTO string_value.
+        is_first = abap_false.
+      ELSE.
+        CONCATENATE string_value `, ` name ` : ` value INTO string_value.
+      ENDIF.
+    ENDWHILE.
+    CONCATENATE `{ ` string_value ` }` INTO string_value.
+    returning = string_value.
+  ENDMETHOD.
+************************************************************************
+  METHOD json_string_to_string.
+************************************************************************
+    DATA value TYPE string.
+    value = json_string->value.
+
+    " Escape characters according to json spec
+
+    " - Backslashes first so the backslashes added by the other escapes won't be double-escaped
+    REPLACE ALL OCCURRENCES OF '\' IN value WITH '\\'.
+    " - Double quote
+    REPLACE ALL OCCURRENCES OF '"' IN value WITH '\"'.
+    " - Slash
+    REPLACE ALL OCCURRENCES OF '/' IN value WITH '\/'.
+
+    " Convert the value to UTF-8 bytes, so we can easily find and replace characters which must be escaped
+    DATA converter_out TYPE REF TO cl_abap_conv_out_ce.
+    converter_out = cl_abap_conv_out_ce=>create( encoding = `UTF-8` ).
+    DATA value_x TYPE xstring.
+    converter_out->convert( EXPORTING data = value IMPORTING buffer = value_x ).
+
+    " - Backspace
+    DATA backspace_x TYPE x LENGTH 1 VALUE `08`.
+    DATA escaped_backspace TYPE string VALUE `\b`.
+    DATA escaped_backspace_x TYPE xstring.
+    converter_out->convert( EXPORTING data = escaped_backspace IMPORTING buffer = escaped_backspace_x ).
+    REPLACE ALL OCCURRENCES OF backspace_x IN value_x WITH escaped_backspace_x IN BYTE MODE.
+    " - Formfeed
+    DATA formfeed_x TYPE x LENGTH 1 VALUE `0C`.
+    DATA escaped_formfeed TYPE string VALUE `\f`.
+    DATA escaped_formfeed_x TYPE xstring.
+    converter_out->convert( EXPORTING data = escaped_formfeed IMPORTING buffer = escaped_formfeed_x ).
+    REPLACE ALL OCCURRENCES OF formfeed_x IN value_x WITH escaped_formfeed_x IN BYTE MODE.
+    " - Newline
+    DATA newline_x TYPE x LENGTH 1 VALUE `0A`.
+    DATA escaped_newline TYPE string VALUE `\n`.
+    DATA escaped_newline_x TYPE xstring.
+    converter_out->convert( EXPORTING data = escaped_newline IMPORTING buffer = escaped_newline_x ).
+    REPLACE ALL OCCURRENCES OF newline_x IN value_x WITH escaped_newline_x IN BYTE MODE.
+    " - Carriage return
+    DATA carriagereturn_x TYPE x LENGTH 1 VALUE `0D`.
+    DATA escaped_carriagereturn TYPE string VALUE `\r`.
+    DATA escaped_carriagereturn_x TYPE xstring.
+    converter_out->convert( EXPORTING data = escaped_carriagereturn IMPORTING buffer = escaped_carriagereturn_x ).
+    REPLACE ALL OCCURRENCES OF carriagereturn_x IN value_x WITH escaped_carriagereturn_x IN BYTE MODE.
+    " - Horizontal tab
+    DATA horizontaltab_x TYPE x LENGTH 1 VALUE `09`.
+    DATA escaped_horizontaltab TYPE string VALUE `\t`.
+    DATA escaped_horizontaltab_x TYPE xstring.
+    converter_out->convert( EXPORTING data = escaped_horizontaltab IMPORTING buffer = escaped_horizontaltab_x ).
+    REPLACE ALL OCCURRENCES OF horizontaltab_x IN value_x WITH escaped_horizontaltab_x IN BYTE MODE.
+
+    " Convert the value back to a UTF-8 string
+    DATA converter_in TYPE REF TO cl_abap_conv_in_ce.
+    converter_in = cl_abap_conv_in_ce=>create( encoding = `UTF-8` ).
+    converter_in->convert( EXPORTING input = value_x IMPORTING data = value ).
+
+    " Surround value with double quotes
+    CONCATENATE `"` value `"` INTO value.
+
+    returning = value.
+  ENDMETHOD.
+************************************************************************
+  METHOD serialize.
+************************************************************************
+    DATA value TYPE string.
+    CASE json_value->get_type( ).
+      WHEN lcl_json_types=>type_string.
+        DATA json_string_value TYPE REF TO lcl_json_string.
+        json_string_value ?= json_value.
+        value = me->json_string_to_string( json_string_value ).
+      WHEN lcl_json_types=>type_number.
+        DATA json_number_value TYPE REF TO lcl_json_number.
+        json_number_value ?= json_value.
+        value = me->json_number_to_string( json_number_value ).
+      WHEN lcl_json_types=>type_boolean.
+        DATA json_boolean_value TYPE REF TO lcl_json_boolean.
+        json_boolean_value ?= json_value.
+        value = me->json_boolean_to_string( json_boolean_value ).
+      WHEN lcl_json_types=>type_null.
+        value = `null`.                                     "#EC NOTEXT
+      WHEN lcl_json_types=>type_object.
+        DATA json_object_value TYPE REF TO lcl_json_object.
+        json_object_value ?= json_value.
+        value = me->json_object_to_string( json_object_value ).
+      WHEN lcl_json_types=>type_array.
+        DATA json_array_value TYPE REF TO lcl_json_array.
+        json_array_value ?= json_value.
+        value = me->json_array_to_string( json_array_value ).
+    ENDCASE.
+    returning = value.
+  ENDMETHOD.
+************************************************************************
+  METHOD utf8_byte_value.
+************************************************************************
+    utf8_converter->reset( ).
+    utf8_converter->write( data = char ).
+    returning = utf8_converter->get_buffer( ).
+  ENDMETHOD.
+************************************************************************
+  METHOD _substring.
+************************************************************************
+    DATA begin TYPE i.
+    DATA end TYPE i.
+    IF endindex IS NOT SUPPLIED.
+      end = strlen( thestring ).
+    ELSE.
+      end = endindex.
+    ENDIF.
+    IF beginindex < 0.
+      begin = 0.
+    ELSE.
+      begin = beginindex.
+    ENDIF.
+    IF end > strlen( thestring ).
+      end = strlen( thestring ).
+    ENDIF.
+    IF begin > end.
+      RETURN.
+    ENDIF.
+    DATA substring TYPE string.
+    IF begin = 0 AND end = strlen( thestring ).
+      substring = thestring.
+    ELSE.
+      DATA len TYPE i.
+      len = end - begin.
+      substring = thestring+begin(len).
+    ENDIF.
+    returning = substring.
+  ENDMETHOD.
+ENDCLASS. "lCL_JSON_PARSER implementation
+
+
+CLASS lcl_json_util DEFINITION
+*  PUBLIC
+  INHERITING FROM lcl_object
+  FINAL.
+  "create public .
+
+  PUBLIC SECTION.
+
+    CLASS-METHODS new_object_with_array_pair
+      IMPORTING
+        name            TYPE string
+        value           TYPE REF TO lcl_json_array
+      RETURNING
+        VALUE(returning) TYPE REF TO lcl_json_object .
+    TYPE-POOLS abap .
+    CLASS-METHODS new_object_with_bool_pair
+      IMPORTING
+        name            TYPE string
+        value           TYPE abap_bool
+      RETURNING
+        VALUE(returning) TYPE REF TO lcl_json_object .
+    CLASS-METHODS new_object_with_null_pair
+      IMPORTING
+        name            TYPE string
+      RETURNING
+        VALUE(returning) TYPE REF TO lcl_json_object .
+    CLASS-METHODS new_object_with_number_pair
+      IMPORTING
+        name            TYPE string
+        value           TYPE f
+      RETURNING
+        VALUE(returning) TYPE REF TO lcl_json_object .
+    CLASS-METHODS new_object_with_object_pair
+      IMPORTING
+        name            TYPE string
+        value           TYPE REF TO lcl_json_object
+      RETURNING
+        VALUE(returning) TYPE REF TO lcl_json_object .
+    CLASS-METHODS new_object_with_string_pair
+      IMPORTING
+        name            TYPE string
+        value           TYPE string
+      RETURNING
+        VALUE(returning) TYPE REF TO lcl_json_object .
+    CLASS-METHODS new_pair_with_array
+      IMPORTING
+        name            TYPE string
+        value           TYPE REF TO lcl_json_array
+      RETURNING
+        VALUE(returning) TYPE REF TO lcl_json_pair .
+    CLASS-METHODS new_pair_with_bool
+      IMPORTING
+        name            TYPE string
+        value           TYPE abap_bool
+      RETURNING
+        VALUE(returning) TYPE REF TO lcl_json_pair .
+    CLASS-METHODS new_pair_with_null
+      IMPORTING
+        name            TYPE string
+      RETURNING
+        VALUE(returning) TYPE REF TO lcl_json_pair .
+    CLASS-METHODS new_pair_with_number
+      IMPORTING
+        name            TYPE string
+        value           TYPE f
+      RETURNING
+        VALUE(returning) TYPE REF TO lcl_json_pair .
+    CLASS-METHODS new_pair_with_object
+      IMPORTING
+        name            TYPE string
+        value           TYPE REF TO lcl_json_object
+      RETURNING
+        VALUE(returning) TYPE REF TO lcl_json_pair .
+    CLASS-METHODS new_pair_with_string
+      IMPORTING
+        name            TYPE string
+        value           TYPE string
+      RETURNING
+        VALUE(returning) TYPE REF TO lcl_json_pair .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS. "lCL_JSON_UTIL definition
+
+CLASS lcl_json_util IMPLEMENTATION.
+************************************************************************
+  METHOD new_object_with_array_pair.
+************************************************************************
+    DATA json_obj TYPE REF TO lcl_json_object.
+    DATA json_pair TYPE REF TO lcl_json_pair.
+    CREATE OBJECT json_obj.
+    json_pair = new_pair_with_array( name = name value = value ).
+    json_obj->add( json_pair ).
+    returning = json_obj.
+  ENDMETHOD.
+************************************************************************
+  METHOD new_object_with_bool_pair.
+************************************************************************
+    DATA json_obj TYPE REF TO lcl_json_object.
+    DATA json_pair TYPE REF TO lcl_json_pair.
+    CREATE OBJECT json_obj.
+    json_pair = new_pair_with_bool( name = name value = value ).
+    json_obj->add( json_pair ).
+    returning = json_obj.
+  ENDMETHOD.
+************************************************************************
+  METHOD new_object_with_null_pair.
+************************************************************************
+    DATA json_obj TYPE REF TO lcl_json_object.
+    DATA json_pair TYPE REF TO lcl_json_pair.
+    CREATE OBJECT json_obj.
+    json_pair = new_pair_with_null( name = name ).
+    json_obj->add( json_pair ).
+    returning = json_obj.
+  ENDMETHOD.
+************************************************************************
+  METHOD new_object_with_number_pair.
+************************************************************************
+    DATA json_obj TYPE REF TO lcl_json_object.
+    DATA json_pair TYPE REF TO lcl_json_pair.
+    CREATE OBJECT json_obj.
+    json_pair = new_pair_with_number( name = name value = value ).
+    json_obj->add( json_pair ).
+    returning = json_obj.
+  ENDMETHOD.
+************************************************************************
+  METHOD new_object_with_object_pair.
+************************************************************************
+    DATA json_obj TYPE REF TO lcl_json_object.
+    DATA json_pair TYPE REF TO lcl_json_pair.
+    CREATE OBJECT json_obj.
+    json_pair = new_pair_with_object( name = name value = value ).
+    json_obj->add( json_pair ).
+    returning = json_obj.
+  ENDMETHOD.
+************************************************************************
+  METHOD new_object_with_string_pair.
+************************************************************************
+    DATA json_obj TYPE REF TO lcl_json_object.
+    DATA json_pair TYPE REF TO lcl_json_pair.
+    CREATE OBJECT json_obj.
+    json_pair = new_pair_with_string( name = name value = value ).
+    json_obj->add( json_pair ).
+    returning = json_obj.
+  ENDMETHOD.
+************************************************************************
+  METHOD new_pair_with_array.
+************************************************************************
+    DATA pair TYPE REF TO lcl_json_pair.
+    DATA pair_name TYPE REF TO lcl_json_string.
+    CREATE OBJECT pair_name
+      EXPORTING
+        value = name.
+    CREATE OBJECT pair
+      EXPORTING
+        name  = pair_name
+        value = value.
+    returning = pair.
+  ENDMETHOD.
+************************************************************************
+  METHOD new_pair_with_bool.
+************************************************************************
+    DATA pair TYPE REF TO lcl_json_pair.
+    DATA pair_name TYPE REF TO lcl_json_string.
+    DATA pair_value TYPE REF TO lcl_json_boolean.
+    CREATE OBJECT pair_name
+      EXPORTING
+        value = name.
+    CREATE OBJECT pair_value
+      EXPORTING
+        value = value.
+    CREATE OBJECT pair
+      EXPORTING
+        name  = pair_name
+        value = pair_value.
+    returning = pair.
+  ENDMETHOD.
+************************************************************************
+  METHOD new_pair_with_null.
+************************************************************************
+    DATA pair TYPE REF TO lcl_json_pair.
+    DATA pair_name TYPE REF TO lcl_json_string.
+    DATA pair_value TYPE REF TO lcl_json_null.
+    CREATE OBJECT pair_name
+      EXPORTING
+        value = name.
+    CREATE OBJECT pair_value.
+    CREATE OBJECT pair
+      EXPORTING
+        name  = pair_name
+        value = pair_value.
+    returning = pair.
+  ENDMETHOD.
+************************************************************************
+  METHOD new_pair_with_number.
+************************************************************************
+    DATA pair TYPE REF TO lcl_json_pair.
+    DATA pair_name TYPE REF TO lcl_json_string.
+    DATA pair_value TYPE REF TO lcl_json_number.
+    CREATE OBJECT pair_name
+      EXPORTING
+        value = name.
+    CREATE OBJECT pair_value
+      EXPORTING
+        value = value.
+    CREATE OBJECT pair
+      EXPORTING
+        name  = pair_name
+        value = pair_value.
+    returning = pair.
+  ENDMETHOD.
+************************************************************************
+  METHOD new_pair_with_object.
+************************************************************************
+    DATA pair TYPE REF TO lcl_json_pair.
+    DATA pair_name TYPE REF TO lcl_json_string.
+    CREATE OBJECT pair_name
+      EXPORTING
+        value = name.
+    CREATE OBJECT pair
+      EXPORTING
+        name  = pair_name
+        value = value.
+    returning = pair.
+  ENDMETHOD.
+************************************************************************
+  METHOD new_pair_with_string.
+************************************************************************
+    DATA pair TYPE REF TO lcl_json_pair.
+    DATA pair_name TYPE REF TO lcl_json_string.
+    DATA pair_value TYPE REF TO lcl_json_string.
+    CREATE OBJECT pair_name
+      EXPORTING
+        value = name.
+    CREATE OBJECT pair_value
+      EXPORTING
+        value = value.
+    CREATE OBJECT pair
+      EXPORTING
+        name  = pair_name
+        value = pair_value.
+    returning = pair.
+  ENDMETHOD.
+ENDCLASS. "lCL_JSON_UTIL implementation
